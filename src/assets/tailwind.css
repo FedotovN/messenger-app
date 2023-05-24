@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.card {
+    @apply flex justify-center items-center transition-colors shadow rounded bg-white text-gray-600 border border-gray-300 sm:border-none dark:border-gray-600 dark:text-gray-100 dark:bg-dark-200 cursor-pointer
+}
+.nowrap {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis
+}
+.transition-border-width {
+    transition: border-width .15s;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    width: 0;
+}

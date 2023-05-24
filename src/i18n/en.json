@@ -1,0 +1,125 @@
+{
+    "form": {
+        "placeholders": {
+            "username": "Your username",
+            "email": "Your email",
+            "password": "Your password",
+            "repeatPassword": "Repeat password",
+            "bio": "About me"
+        },
+        "buttons": {
+            "accept": "Accept",
+            "save": "Save",
+            "continue": "Continue",
+            "next": "Next",
+            "cancel": "Cancel",
+            "enter": "Enter",
+            "remove": "Remove",
+            "signIn": "Sign in",
+            "edit": "Edit"
+        },
+        "checkbox": {
+            "rememberMe": "Remember me",
+            "noRules": "No rules here"
+        },
+        "errors": {
+            "email": {
+                "required": "Email is required",
+                "already-used": "This email is already used",
+                "incorrect": "This email is incorrect"
+            },
+            "password": {
+                "required": "Password is required",
+                "incorrect": "This password is incorrect",
+                "minLength": "Minimal length for password is 6, current is {msg}"
+            },
+            "repeatPassword": {
+                "incorrect": "Field value doesn't match password value"
+            },
+            "username": {
+                "required": "Username is required"
+            }
+        },
+        "operations": {
+            "titles": {
+                "wait": "Hold on...",
+                "register": "Querying the database...",
+                "login": "Logging in",
+                "update": "Updating..."
+            },
+            "messages": {
+                "auth/user-not-found": "User not found 👻",
+                "auth/session-closed": "You logged out 👋",
+                "auth/logged-in": "Welcome 👋",
+                "auth/verifying-link": "Verification link sended ✔️",
+                "auth/email-already-in-use": "Email already in use ☝️",
+                "auth/invalid-email": "Invalid email 🧠",
+                "auth/wrong-password": "Invalid password 🧠",
+                "auth/network-request-failed": "Network request failed 🔌",
+                "auth/email-not-verified": "You have to verify the email 🦾",
+                "auth/popup-closed-by-user": "Popup closed ✋",
+                "auth/not-authorized": "Log in first 🔒",
+                "auth/too-many-requests": "Too many requests 🔒"
+            },
+            "fallbacks": {
+                "error": "Something went wrong 👻"
+            }
+        }
+    },
+    "titles": {
+        "welcome": "Welcome",
+        "taskTracker": "Task tracker",
+        "users": "Users",
+        "register": "Sign Up",
+        "passwordRecovery": "Password recovery",
+        "joinUs": "Join us",
+        "profile": "Profile"   
+    },
+    "phrases": {
+        "or": "or",
+        "sure": "Are you sure?",
+        "yes": "Yes",
+        "no": "No",
+        "noAccount": "No account?",
+        "haveAccount": "Already have an account?",
+        "taskTracker": "Task tracker",
+        "weListen": "We're listening carefully...",
+        "cantCreatePassword": "Can't think of a password?",
+        "sendLink": "Send verification link",
+        "loginWithGoogle": "Login using Google",
+        "randomAvatar": "Get random avatar",
+        "namedAvatar": "Unique avatar for username"
+    },
+    "pages": {
+        "login": "Login",
+        "signUp": "Sign Up",
+        "passwordRecovery": "Password Recovery",
+        "users": "Users",
+        "todoList": "Todo",
+        "timer": "Timer",
+        "drawingBoard": "Board",
+        "dashboard": "Dashboard",
+        "profile": "Profile"
+    },
+    "operations": {
+        "users": {
+            "delete": "Removing local save of {msg}"
+        }
+    },
+    "fallbacks": {
+        "noUsers": "No users yet.",
+        "createUser": "You can cache user info using \"Remember me\" checkbox in login page"
+    },
+    "links": {
+        "external": {
+            "passwordGenerator": "Password generator"
+        },
+        "internal": {
+            "signIn": "Login",
+            "passwordRecovery": "Password recovery",
+            "joinUs": "Sign up",
+            "users": "Users",
+            "back": "Back"
+        }               
+    }
+}

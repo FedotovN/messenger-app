@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "noImplicitAny": false,
     "target": "esnext",
     "module": "esnext",
     "strict": true,

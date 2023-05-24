@@ -1,19 +1,54 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-
-const routes: Array<RouteRecordRaw> = [
+import { createRouter, createWebHistory } from 'vue-router'
+import { auth } from '@/firebase/config'
+import { messages, locale} from '@/i18n/index.js'
+const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'main',
+    component: () => import('@/views/chat/MainPage.vue'),
+    meta: {auth: true, layout: 'tracker', title: 'main', transition: 'tracker'}
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/auth/LoginPage.vue'),
+    meta: {auth: false, layout: 'auth', transition: 'auth', title: 'login'}
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/auth/RegisterPage.vue'),
+    meta: {auth: false, layout: 'auth', transition: 'auth', title: 'signUp'}
+  },
+  {
+    path: '/reset',
+    name: 'password-reset',
+    component: () => import('@/views/auth/PasswordReset.vue'),
+    meta: {auth: false, layout: 'auth', transition: 'auth', title: 'passwordRecovery'}
+  },
+  {
+    path: '/profile/:uid',
+    name: 'profile-edit',
+    component: () => import('@/views/auth/ProfileEditPage.vue'),
+    meta: {auth: false, layout: 'auth', transition: 'auth', title: 'profile'},
+    props: (route) => ({
+      uid: route.params.uid
+    })
+  },
+  {
+    path: '/users',
+    name: 'users',
+    component: () => import('@/views/auth/AvailableUsers.vue'),
+    meta: {auth: false, layout: 'auth', transition: 'auth', title: 'users'}
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import ('@/views/app/NotFound.vue'),
+    props: (route) => ({
+      path: route.path
+    }),
+    meta: {layout: 'auth', title: 'notFound'}
   }
 ]
 
@@ -21,5 +56,18 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-
+router.beforeEach((to: any)=>{
+    if(to.meta.title) {
+      const localizedTitle = messages[locale]?.pages?.[to.meta.title]
+      document.title = localizedTitle ? localizedTitle : 'Task tracker'
+    }
+    else document.title = 'Task tracker'
+    if(to.meta.auth && !auth.currentUser) {
+      return {name: 'login', query: {
+        redirect: to.name,
+        message: 'auth/not-authorized'
+      }}
+    }
+})
 export default router
+
