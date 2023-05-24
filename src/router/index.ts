@@ -6,7 +6,7 @@ const routes = [
     path: '/',
     name: 'main',
     component: () => import('@/views/chat/MainPage.vue'),
-    meta: {auth: true, layout: 'tracker', title: 'main', transition: 'tracker'}
+    meta: {auth: true, layout: 'main', title: 'main', transition: 'chat'}
   },
   {
     path: '/login',
@@ -59,9 +59,9 @@ const router = createRouter({
 router.beforeEach((to: any)=>{
     if(to.meta.title) {
       const localizedTitle = messages[locale]?.pages?.[to.meta.title]
-      document.title = localizedTitle ? localizedTitle : 'Task tracker'
+      document.title = localizedTitle ? localizedTitle : 'Chat app'
     }
-    else document.title = 'Task tracker'
+    else document.title = 'Chat app'
     if(to.meta.auth && !auth.currentUser) {
       return {name: 'login', query: {
         redirect: to.name,

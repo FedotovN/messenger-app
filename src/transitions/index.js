@@ -1,5 +1,5 @@
 import AuthTransition from "./AuthTransition.vue"
-import TrackerTransition from "./TrackerTransition.vue"
+import ChatTransition from "./ChatTransition.vue"
 export default {
-    AuthTransition, TrackerTransition
+    AuthTransition, ChatTransition
 }

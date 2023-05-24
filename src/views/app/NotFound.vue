@@ -4,7 +4,7 @@
     <small class="text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">{{ path }}</small>
     <div class="flex w-full justify-between">
         <base-link :to="{name: 'login'}">Вход</base-link>
-        <base-link :to="{name: 'todo'}">Главная</base-link>
+        <base-link :to="{name: 'main'}">Главная</base-link>
     </div>
   </div>
 </template>

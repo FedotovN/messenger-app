@@ -1,5 +1,5 @@
 import AuthLayout from './AuthLayout.vue'
-import TrackerLayout from './TrackerLayout.vue'
+import MainLayout from './MainLayout.vue'
 export default {
-    AuthLayout, TrackerLayout
+    AuthLayout, MainLayout
 }

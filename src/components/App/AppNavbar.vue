@@ -35,7 +35,7 @@ export default {
                 name: 'login',
                 label: 'Выход',
                 icon: 'fa-solid fa-arrow-right-from-bracket',
-                exact: true
+                callback: 'logout'
             },
         ]
     }),

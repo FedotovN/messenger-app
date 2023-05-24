@@ -10,7 +10,7 @@
   
   <script>
   export default {
-      name: 'TrackerTransition'
+      name: 'ChatTransition'
   }
   </script>
   

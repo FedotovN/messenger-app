@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-[calc(0.25rem_*_16)] bg-primary-200 shadow w-full sm:flex hidden">
-    <div class="w-full h-full flex justify-between items-center pr-2 pl-4">
+    <div class="w-full h-full flex justify-between items-center pr-3 pl-3">
         <div class="w-full flex gap-8 items-center overflow-hidden">
             <div class="flex gap-5 items-center overflow-hidden cursor-pointer" v-if="userInfo">
                 <div class="rounded-full min-w-[2.5rem] w-10 h-10 bg-gray-300 overflow-hidden">

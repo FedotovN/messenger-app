@@ -16,7 +16,7 @@ import AppHeader from '@/components/App/AppHeader.vue';
 import AppSidebar from '@/components/App/AppSidebar.vue';
 import AppNavbar from '@/components/App/AppNavbar.vue';
 export default {
-    name: 'TrackerLayout',
+    name: 'MainLayout',
     components: {
         AppSidebar, AppHeader, AppNavbar
     }
