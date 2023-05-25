@@ -1,8 +1,12 @@
 <template>
-    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 sm:min-w-[300px] sm:w-[300px] py-6 overflow-hidden flex-1">
-        <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2"/>
-        <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide border-y-2 dark:border-gray-600 shadow-inner-top">
+    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 py-6 overflow-hidden w-full">
+        <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 hidden sm:block"/>
+        <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="users.length">
             <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
+        </div>
+        <div class="flex flex-col flex-1 w-full justify-center items-center gap-2 px-3 text-center" v-else>
+            <p class="font-semibold text-gray-700 dark:text-gray-300">Чатов пока нет!</p>
+            <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Чтобы начать, используйте функцию поиска внизу</small>
         </div>
     </div>
 </template>

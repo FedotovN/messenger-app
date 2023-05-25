@@ -26,13 +26,11 @@ export default {
             try {
                 const ref = await doc(firestore, `users/${newProfile.uid}`),
                   data = (await getDoc(ref)).data()
-                  console.log(data)
                 if(data) res = { ...data, ...newProfile }
                 else res = { ...newProfile }
                 res = Object.entries(res).filter( i => i[1] ).reduce((acc, item) => {
                     return acc = {...acc, [item[0]]: item[1]}
                 }, {})
-                console.log(res)
                 await setDoc(ref, res)
             }
             catch(e) {

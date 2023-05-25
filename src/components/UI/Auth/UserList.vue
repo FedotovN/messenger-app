@@ -13,10 +13,10 @@
     <div
         v-if="users"
         :class="forceListView ? 'grid' : 'sm:hidden grid'"
-        class="py-4 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] grid-rows-[repeat(auto-fill, 180px)] w-full max-h-full gap-x-4 scrollbar-hide">
+        class="py-4 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] grid-rows-[repeat(auto-fit,180px)] w-full max-h-full gap-x-4 scrollbar-hide">
         <user-card
             :user="user"
-            class="transition-all pb-2 col-span-1 justify-self-center"
+            class="transition-all col-span-1 justify-self-center"
             @remove="removeUser(user)"
             v-for="user in users"
             :key="user?.uid"

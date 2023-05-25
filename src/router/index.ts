@@ -6,7 +6,15 @@ const routes = [
     path: '/',
     name: 'main',
     component: () => import('@/views/chat/MainPage.vue'),
-    meta: {auth: true, layout: 'main', title: 'main', transition: 'chat'}
+    meta: {auth: true, layout: 'main', title: 'main', transition: 'chat'},
+    children: [
+      {
+        path: ':chatId',
+        name: 'chat',
+        component: () => import('@/components/Chat/ChatLayout.vue'),
+        props: (route) => ({chatId: route.params.chatId})
+      }
+    ]
   },
   {
     path: '/login',

@@ -1,7 +1,17 @@
 <template>
   <div class="h-14 dark:bg-dark-300 bg-primary-200 sm:hidden flex justify-between">
-    <base-modal v-model="showModal">
-        meow meow meow meow =^.,.^=
+    <base-modal v-model="showModalSearch">
+        <template #header>Поиск</template>
+        <div class="py-3">
+            <base-search-input v-model="search" placeholder="Найти, с кем поговорить" />
+        </div>
+    </base-modal>
+    <base-modal v-model="showModalLogout">
+        <template #header>Вы уверены, что хотите выйти?</template>
+        <div class="flex gap-2">
+            <base-button class="flex-4" theme="passive" @click="showModalLogout = false">Отмена</base-button>
+            <base-button class="flex-2" @click="logout">Да</base-button>
+        </div>
     </base-modal>
     <ul class="flex h-full w-full">
         <li v-for="l in links" :key="l.name" class="flex flex-1 cursor-pointer items-center justify-center ">
@@ -23,47 +33,78 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import User from '@/classes/auth/User'
+import BaseSearchInput from '../Chat/BaseSearchInput.vue'
 export default {
     name: 'AppNavbar',
+    components: { BaseSearchInput },
     data: () => ({
         links: [
             {   
                 name: 'main',
-                label: 'Главная',
-                icon: 'fa-solid fa-envelope',
+                label: 'Контакты',
+                icon: 'fa-solid fa-book',
                 exact: true
             },
             {   
                 name: 'search',
                 label: 'Поиск',
                 icon: 'fa-solid fa-search',
-                callback: 'search'
+                callback: 'onSearchTap'
+            },
+            {   
+                name: 'settings',
+                label: 'Пользователь',
+                icon: 'fa-solid fa-user',
+                callback: 'profileEdit'
+            },
+            {   
+                name: 'settings',
+                label: 'Настройки',
+                icon: 'fa-solid fa-gear',
+                callback: 'configure'
             },
             {   
                 name: 'logout',
                 label: 'Выход',
-                icon: 'fa-solid fa-arrow-right-from-bracket',
+                icon: 'fa-solid fa-right-from-bracket',
                 callback: 'logout'
-            },
+            }
         ],
-        showModal: false
+        showModalSearch: false,
+        showModalLogout: false,
+        search: ''
     }),
     methods: {
-        logout() {
+        logout(): void {
             this.$store.dispatch('auth/logout')
             this.$router.push({name: 'login', query: {
                 message: "auth/session-closed"
             }})
         },
-        search() {
-            this.showModal = true
+        onSearchTap(): void {
+            this.showModalSearch = true
         },
-        onClick(link) {
+        onLogoutTap(): void {
+            this.showModalLogout = true
+        },
+        profileEdit(): void {
+            this.$router.push({name: 'profile-edit', params: {uid: this.user.uid}})
+        },
+        configure(): void {
+            this.$toast.show('Пока тут ничего нет')
+        },
+        onClick(link): void {
             if(!link.callback) {
-                this.$router.push({name: link.name})
+                this.$router.push({ name: link.name, })
             }
             else if( this[link.callback] ) this[link.callback]()
+        }
+    },
+    computed: {
+        user(): User {
+            return this.$store.getters['auth/getUser']
         }
     }
 }
