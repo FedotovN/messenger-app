@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkmessenger_app"]=self["webpackChunkmessenger_app"]||[]).push([[977],{9977:function(e,n,r){r.r(n),r.d(n,{default:function(){return l}});var a=r(3396);const s={class:"h-full w-full bg-gray-100 dark:bg-gray-600"};function u(e,n,r,u,t,c){return(0,a.wg)(),(0,a.iD)("div",s)}var t={name:"ChatLayout"},c=r(89);const f=(0,c.Z)(t,[["render",u]]);var l=f}}]);
+//# sourceMappingURL=977.49cd3d9c.js.map
