@@ -1,5 +1,8 @@
 <template>
-  <div class="flex-col justify-between bg-dark-200 dark:bg-dark-300 left-0 h-full sm:shadow-none shadow-xl sm:relative sm:flex hidden px-2 py-2">
+  <div class="flex-col justify-between bg-gray-700 dark:bg-dark-300 left-0 h-full sm:shadow-none shadow-xl sm:relative sm:flex hidden px-2 py-2">
+    <header class="flex w-full justify-center py-4">
+        <avatar-badge :user="user" />
+    </header>
     <ul class="flex flex-col h-full w-full -mt-3 text-white ">
         <li v-for="l in links" :key="l.name" class="flex justify-center w-full">
             <router-link
@@ -18,8 +21,10 @@
 </template>
 
 <script>
+import AvatarBadge from '../UI/Auth/AvatarBadge.vue'
 export default {
     name: 'AppSidebar',
+    components: { AvatarBadge },
     data: () => ({
         links: [
             {
@@ -29,7 +34,12 @@ export default {
                 exact: true
             }
         ]
-    })
+    }),
+    computed: {
+        user() {
+            return this.$store.getters['auth/getUser']
+        }
+    }
 }
 </script>
 
