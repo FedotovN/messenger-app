@@ -1,5 +1,8 @@
 <template>
   <div class="h-14 dark:bg-dark-300 bg-primary-200 sm:hidden flex justify-between">
+    <base-modal v-model="showModal">
+        meow meow meow meow =^.,.^=
+    </base-modal>
     <ul class="flex h-full w-full">
         <li v-for="l in links" :key="l.name" class="flex flex-1 cursor-pointer items-center justify-center ">
             <div
@@ -32,12 +35,19 @@ export default {
                 exact: true
             },
             {   
-                name: 'login',
+                name: 'search',
+                label: 'Поиск',
+                icon: 'fa-solid fa-search',
+                callback: 'search'
+            },
+            {   
+                name: 'logout',
                 label: 'Выход',
                 icon: 'fa-solid fa-arrow-right-from-bracket',
                 callback: 'logout'
             },
-        ]
+        ],
+        showModal: false
     }),
     methods: {
         logout() {
@@ -45,6 +55,9 @@ export default {
             this.$router.push({name: 'login', query: {
                 message: "auth/session-closed"
             }})
+        },
+        search() {
+            this.showModal = true
         },
         onClick(link) {
             if(!link.callback) {

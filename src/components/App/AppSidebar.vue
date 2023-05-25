@@ -29,7 +29,7 @@ export default {
         links: [
             {
                 name: 'main',
-                label: 'Главная',
+                label: 'Мяумная',
                 icon: 'fa-solid fa-envelope',
                 exact: true
             }

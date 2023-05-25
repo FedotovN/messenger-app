@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 min-w-[300px] py-6 overflow-hidden">
+    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 sm:min-w-[300px] sm:w-[300px] py-6 overflow-hidden flex-1">
         <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2"/>
         <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide border-y-2 dark:border-gray-600 shadow-inner-top">
             <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
@@ -19,7 +19,7 @@ export default defineComponent({
     name: "ContactsList",
     components: { BaseSearchInput, ContactItem },
     data: () => ({
-        search: "" as string,
+        search: "",
         debouncedQuery: null as any,
         loading: false,
         users: [] as User[]
