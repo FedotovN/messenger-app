@@ -2,7 +2,7 @@
   <div class="overflow-hidden">
         <div class="bg-gray-300 pl-3 pr-2 flex gap-1 items-center dark:focus:border-primary-100 focus:border-primary-200 transition-colors dark:bg-gray-600 dark:text-gray-300 rounded-full border-none overflow-hidden
         ">
-            <i class="fa-solid fa-search text-gray-600 dark:text-gray-400 text-sm"></i>
+            <i class="fa-solid fa-search text-gray-600 dark:text-gray-400 text-sm w-5 m-0 p-0"></i>
             <input
                 :value="modelValue || value"
                 :name="id"
@@ -14,8 +14,11 @@
                 @input="updateInput"
                 @focusin="isActive = true"
                 @focusout="isActive = false"
-                class="w-full h-10 pl-2 text-md outline-none dark:bg-gray-600 bg-gray-300 shadow-none" 
+                class="w-full h-10 text-md outline-none dark:bg-gray-600 bg-gray-300 shadow-none" 
                 />
+            <div class="w-3">
+                <base-loader size="tiny"  v-if="this.loading"/>
+            </div>
         </div>
 
         <small
@@ -69,6 +72,11 @@ export default defineComponent({
             type: String,
             required: false,
             default: ''
+        },
+        loading: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     data() {

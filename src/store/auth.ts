@@ -26,11 +26,13 @@ export default {
             try {
                 const ref = await doc(firestore, `users/${newProfile.uid}`),
                   data = (await getDoc(ref)).data()
+                  console.log(data)
                 if(data) res = { ...data, ...newProfile }
                 else res = { ...newProfile }
                 res = Object.entries(res).filter( i => i[1] ).reduce((acc, item) => {
                     return acc = {...acc, [item[0]]: item[1]}
                 }, {})
+                console.log(res)
                 await setDoc(ref, res)
             }
             catch(e) {
@@ -56,11 +58,11 @@ export default {
         async signInWithEmail({ commit, dispatch }, {email, password, toSaveUser = false}) {
             try {
                 const user = (await signInWithEmailAndPassword(auth, email, password)).user
-                if(!user.emailVerified){
-                    const e: NodeJS.ErrnoException = new Error()
-                    e.code = "auth/email-not-verified"
-                    throw(e)
-                }
+                // if(!user.emailVerified){
+                //     const e: NodeJS.ErrnoException = new Error()
+                //     e.code = "auth/email-not-verified"
+                //     throw(e)
+                // }
 
                 commit('setUser', user)
                 if(toSaveUser) {
@@ -174,11 +176,12 @@ export default {
                     storageReference = ref(storage, `users/${uid}/avatar.jpeg`)
                     await uploadBytes(storageReference, profile_photo_file)
                 }      
+                const photoURL = storageReference! ? await getDownloadURL(storageReference) : null 
                 await updateProfile(auth.currentUser!, {
                     displayName: name,
-                    photoURL: storageReference! ? await getDownloadURL(storageReference) : null
+                    photoURL
                 })
-                await dispatch('linkWithDb', {uid, name, email, password, bio})
+                await dispatch('linkWithDb', {uid, name, email, password, bio, photoURL})
             }
             catch(e) {
                 console.warn('Error in updateProfile method in auth store module')

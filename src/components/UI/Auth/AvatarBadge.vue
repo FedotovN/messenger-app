@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-5 items-center overflow-hidden cursor-pointer" v-if="user">
     <div class="rounded-full min-w-[2.5rem] w-10 h-10 bg-gray-300 overflow-hidden">
-        <img :src="user.photoURL" :alt="user.name" class="object-cover h-full w-full">
+        <img :src="user.photoURL" :alt="user.name" class="object-cover h-full w-full" v-if="user.photoURL">
     </div>
     <base-tooltip :options="{trigger: 'click', arrow: false, theme: 'white'}">
         <div class="w-[150px] text-center flex flex-col text-white gap-4">
