@@ -38,7 +38,7 @@ export default {
                 {
                     name: 'profile-edit',
                     params: {uid: this.userInfo.uid},
-                    query: {fallback: this.$route.name}
+                    query: {fallback: 'main'}
                 }
             )
         },

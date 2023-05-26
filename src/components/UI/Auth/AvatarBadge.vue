@@ -23,6 +23,10 @@ export default defineComponent({
         user: {
             type: Object as PropType<User>,
             required: true
+        },
+        fallbackName: {
+            type: String,
+            required: false
         }
     },
     methods: {
@@ -43,7 +47,7 @@ export default defineComponent({
                         uid: this.user.uid
                     },
                     query: {
-                        fallback: this.$route.name
+                        fallback: this.fallbackName || this.$route.name
                     }
                 } as RouteLocationRaw
             )

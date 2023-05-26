@@ -1,10 +1,10 @@
 <template>
     <div class="flex h-full w-full bg-gradient-to-r from-primary-200 to-purple-200 bg-clip-text">
-        <contacts-list :class="{
-            'hidden sm:block': chatOpened,
-            'w-full sm:w-[300px]': !chatOpened
+        <contacts-list class="h-full md:w-[320px] lg:w-[400px]" :class="{
+            'hidden sm:flex': chatOpened,
+            'w-full': !chatOpened
         }"></contacts-list>
-        <router-view :class="{
+        <router-view class="h-full" :class="{
             'hidden sm:block': !chatOpened,
             'sm:w-full': chatOpened
         }"></router-view>

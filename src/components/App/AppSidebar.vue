@@ -1,7 +1,7 @@
 <template>
   <div class="flex-col justify-between bg-gray-700 dark:bg-dark-300 left-0 h-full sm:shadow-none shadow-xl sm:relative sm:flex hidden px-2 py-2">
     <header class="flex w-full justify-center py-4">
-        <avatar-badge :user="user" />
+        <avatar-badge :user="user" fallback-name="main" />
     </header>
     <ul class="flex flex-col h-full w-full -mt-3 text-white ">
         <li v-for="l in links" :key="l.name" class="flex justify-center w-full">

@@ -1,6 +1,8 @@
 <template>
-    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 py-6 overflow-hidden w-full">
-        <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 hidden sm:block"/>
+    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 py-6 overflow-hidden sm:max-w-[400px] w-full">
+        <header class="flex justify-between items-center">
+            <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 w-full"/>
+        </header>
         <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="users.length">
             <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
         </div>

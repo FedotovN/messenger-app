@@ -62,6 +62,8 @@ export default {
     .dissolve {
         opacity: 0;
         pointer-events: none;
+        top: 50%;
+        left: 50%;
         transform: scale(0.98) translateX(-50%) translateY(-50%);
     }
     .appear {
