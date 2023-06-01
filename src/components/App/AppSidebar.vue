@@ -5,42 +5,104 @@
     </header>
     <ul class="flex flex-col h-full w-full -mt-3 text-white ">
         <li v-for="l in links" :key="l.name" class="flex justify-center w-full">
-            <router-link
-                class="flex items-center text-center w-full py-2 text-xl hover:text-primary-200 transition-colors"
-                active-class="text-primary-200"
-                exact-active-class="text-primary-200"
-                :exact="l.exact"
-                :to="{name: l.name}"
+            <div
+                @click="onClick(l)"
+                class="flex items-center text-center w-full py-2 text-xl hover:text-primary-200 transition-colors cursor-pointer"
                 v-tooltip="{content: l.label, offset: [0, -17]}"
                 >
                 <i class="w-12 mt-4" :class="l.icon"></i>
-            </router-link>
+        </div>
         </li>    
     </ul>
+    <footer>
+        <ul class="flex flex-col h-full w-full -mt-3 text-white ">
+            <li v-for="l in footerBtns" :key="l.name" class="flex justify-center w-full">
+                <div
+                    @click="onClick(l)"
+                    class="flex items-center text-center w-full py-2 text-xl hover:text-primary-200 transition-colors cursor-pointer"
+                    :to="{name: l.name}"
+                    v-tooltip="{content: l.label, offset: [0, -17]}"
+                    >
+                    <i class="w-12 mt-4" :class="l.icon"></i>
+            </div>
+            </li>    
+        </ul>
+    </footer>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AvatarBadge from '../UI/Auth/AvatarBadge.vue'
-export default {
+import {defineComponent} from "vue"
+export default defineComponent({
     name: 'AppSidebar',
     components: { AvatarBadge },
     data: () => ({
         links: [
-            {
+            {   
                 name: 'main',
-                label: 'Мяумная',
-                icon: 'fa-solid fa-envelope',
+                label: 'Контакты',
+                icon: 'fa-solid fa-book',
                 exact: true
+            },
+            {   
+                name: 'saved',
+                label: 'Сохранённые сообщения',
+                icon: 'fa-solid fa-save',
+                callback: 'onSaveTap'
+            },
+            {   
+                name: 'settings',
+                label: 'Пользователь',
+                icon: 'fa-solid fa-user',
+                callback: 'profileEdit'
+            },
+            {   
+                name: 'settings',
+                label: 'Настройки',
+                icon: 'fa-solid fa-gear',
+                callback: 'configure'
+            }
+        ],
+        footerBtns: [
+            {   
+                name: 'logout',
+                label: 'Выход',
+                icon: 'fa-solid fa-arrow-right-from-bracket',
+                callback: 'logout',
+                exact: false
             }
         ]
     }),
+    methods: {
+        onSaveTap(): void {
+            this.$toast.show('Пока тут ничего нет')
+        },
+        async logout(): Promise<void> {
+            await this.$store.dispatch('auth/logout')
+            this.$router.push({name: "login", query: {
+                message: "auth/session-closed"
+            }})
+        },
+        profileEdit(): void {
+            this.$router.push({name: 'profile-edit', params: {uid: this.user.uid}})
+        },
+        configure(): void {
+            this.$toast.show('Пока тут ничего нет')
+        },
+        onClick(link): void {
+            if(!link.callback) {
+                this.$router.push({ name: link.name, })
+            }
+            else if( this[link.callback] ) this[link.callback]()
+        }
+    },
     computed: {
         user() {
             return this.$store.getters['auth/getUser']
         }
     }
-}
+})
 </script>
 
 <style>

@@ -4,7 +4,7 @@
       <color-theme-switcher />
       <language-switcher />
     </div>
-    <div class="flex justify-center items-center overflow-hidden relative sm:w-[450px] lg:w-[900px] w-full h-full transition-all">
+    <div class="flex justify-center items-center overflow-hidden relative sm:w-[450px] md:w-[620px] lg:w-[900px] w-full h-full transition-all">
       <slot></slot>
     </div>
   </div>

@@ -4,5 +4,6 @@ export default class User {
         public uid: string,
         public photoURL: string,
         public bio: string,
+        public email: string
     ){}
 }

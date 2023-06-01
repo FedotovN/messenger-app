@@ -1,8 +1,8 @@
 <template>
   <div class="overflow-hidden">
-        <div class="border-gray-600 bg-gray-100 pl-3 pr-2 flex gap-1 items-center dark:focus:border-primary-100 focus:border-primary-200 transition-colors dark:bg-gray-600 dark:text-gray-300 rounded-full border overflow-hidden
-        ">
-            <i class="fa-solid fa-search text-gray-600 dark:text-gray-400 text-sm w-5 m-0 p-0"></i>
+        <div class="border-gray-300 dark:border-gray-500 bg-gray-100 pl-3 pr-2 flex gap-1 items-center dark:focus:border-primary-100 focus:border-primary-200 transition-colors dark:bg-gray-600 dark:text-gray-300 rounded-full border overflow-hidden
+        " :class="{'border-primary-300 dark:border-primary-100': isActive}">
+            <i class="fa-solid fa-search text-sm w-5 m-0 p-0" :class="{'text-primary-300 dark:text-primary-100': isActive}"></i>
             <input
                 :value="modelValue || value"
                 :name="id"

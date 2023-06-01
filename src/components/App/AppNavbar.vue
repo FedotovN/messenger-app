@@ -1,11 +1,5 @@
 <template>
-  <div class="h-14 dark:bg-dark-300 bg-primary-200 sm:hidden flex justify-between">
-    <base-modal v-model="showModalSearch">
-        <template #header>Поиск</template>
-        <div class="py-3">
-            <base-search-input v-model="search" placeholder="Найти, с кем поговорить" />
-        </div>
-    </base-modal>
+  <div class="h-14 dark:bg-dark-300 bg-gray-100 dark:shadow-none shadow-md sm:hidden flex justify-between">
     <base-modal v-model="showModalLogout">
         <template #header>Вы уверены, что хотите выйти?</template>
         <div class="flex gap-2">
@@ -23,8 +17,8 @@
                     class=" transition-colors text-lg"
                     :class="{
                         [l.icon]: true,
-                        'dark:text-white text-gray-100 opacity-80 dark:opacity-100 ': l.name != $route.name,  
-                        'dark:text-primary-100 opacity-100 text-white': l.name == $route.name
+                        'dark:text-white text-gray-700 dark:opacity-100 ': l.name != $route.name,  
+                        'dark:text-primary-100 text-primary-300 opacity-100 text-white': l.name == $route.name
                     }"></i>
                 </div>
             </div>
@@ -35,10 +29,9 @@
 
 <script lang="ts">
 import User from '@/classes/auth/User'
-import BaseSearchInput from '../Chat/BaseSearchInput.vue'
 export default {
     name: 'AppNavbar',
-    components: { BaseSearchInput },
+    components: {},
     data: () => ({
         links: [
             {   
@@ -48,10 +41,10 @@ export default {
                 exact: true
             },
             {   
-                name: 'search',
-                label: 'Поиск',
-                icon: 'fa-solid fa-search',
-                callback: 'onSearchTap'
+                name: 'saved',
+                label: 'Сохранённые сообщения',
+                icon: 'fa-solid fa-save',
+                callback: 'onSaveTap'
             },
             {   
                 name: 'settings',
@@ -64,12 +57,6 @@ export default {
                 label: 'Настройки',
                 icon: 'fa-solid fa-gear',
                 callback: 'configure'
-            },
-            {   
-                name: 'logout',
-                label: 'Выход',
-                icon: 'fa-solid fa-right-from-bracket',
-                callback: 'logout'
             }
         ],
         showModalSearch: false,
@@ -83,8 +70,8 @@ export default {
                 message: "auth/session-closed"
             }})
         },
-        onSearchTap(): void {
-            this.showModalSearch = true
+        onSaveTap(): void {
+            this.$toast.show('Пока тут ничего нет')
         },
         onLogoutTap(): void {
             this.showModalLogout = true
@@ -105,6 +92,14 @@ export default {
     computed: {
         user(): User {
             return this.$store.getters['auth/getUser']
+        }
+    },
+    watch: {
+        search: {
+            async handler() {
+                if(this.debouncedSearchQuery) this.debouncedSearchQuery.cancel()
+
+            }   
         }
     }
 }

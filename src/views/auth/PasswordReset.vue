@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="onSubmit" class="flex justify-center items0-center w-full sm:h-auto h-full lg:max-w-[450px]">
+  <form @submit.prevent="onSubmit" class="flex justify-center items0-center w-full sm:h-auto h-full lg:max-w-[620px]">
     <div class="bg-white dark:bg-dark-200 sm:shadow sm:rounded items-center flex flex-col w-full h-full sm:h-auto px-4 overflow-hidden">
         <header class="flex justify-center items-center py-2 gap-2 w-full flex-col border-b-2 border-gray-300 dark:border-gray-500">
             <p class="font-semibold tracking-wide text-lg text-gray-700 dark:text-gray-300">{{ $t('titles.passwordRecovery') }} <small class="text-lg">🔨</small></p>
