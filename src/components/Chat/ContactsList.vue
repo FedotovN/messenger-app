@@ -13,7 +13,7 @@
             </div>
             <div class="h-full flex flex-col w-full justify-center items-center gap-4" v-else-if="loading">
                 <base-loader size="medium" />
-                <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Ищем пользователя с именем {{ search }}</small>
+                <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Ищем пользователя с именем "{{ search }}"</small>
             </div>
             <div class="h-full flex flex-col w-full justify-center gap-2" v-else-if="search && !loading">
                 <p class="font-semibold text-gray-700 dark:text-gray-300">Тут никого :(</p>

@@ -4,7 +4,7 @@
       <template #header>
         Пользователь {{ contactInfo.name }}
       </template> 
-      <p v-if="contactInfo.bio">О себе: {{ contactInfo.bio }}</p>
+      <p v-if="contactInfo.bio" class="overflow-x-hidden">О себе: {{ contactInfo.bio }}</p>
       <p v-else>Решил не рассказывать о себе ничего!</p>
       <p v-if="contactInfo.email">Почта: {{ contactInfo.email }}</p>
     </base-modal>

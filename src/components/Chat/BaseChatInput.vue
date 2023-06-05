@@ -5,7 +5,7 @@
     </div>
     <textarea
     :placeholder="placeholder"
-    class="flex max-w-[calc(100vw_-_22.75rem)] m-0 p-2 dark:text-gray-300 text-gray-600 whitespace-wrap overflow-auto bg-transparent outline-none scrollbar-hide resize-none m-0 focus:bg-gray-200 dark:focus:bg-gray-700 transition-colors"
+    class="flex sm:max-w-[calc(100vw_-_22.75rem)] m-0 p-2 dark:text-gray-300 text-gray-600 whitespace-wrap overflow-auto bg-transparent outline-none scrollbar-hide resize-none m-0 focus:bg-gray-200 dark:focus:bg-gray-700 transition-colors"
     ref="textarea"
     :value="modelValue"
     @focusin="focused = true"
