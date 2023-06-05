@@ -26,19 +26,29 @@
         <base-loader size="small" />
       </div>
     </header>
-    <main class="flex-1"></main>
+    <main class="flex-1">
+      {{ newMessageText }}
+    </main>
+    <footer>
+      <div class="w-full h-full" v-if="contactInfo">
+        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print"/>
+      </div>
+    </footer>
   </div>
 </template>
 <script lang="ts">
 
 import Contact from "@/classes/chat/Contact"
+import BaseChatInput from "./BaseChatInput.vue"
 import { defineComponent } from "vue"
 export default defineComponent({
     name: "ChatLayout",
+    components: {BaseChatInput},
       data: () => ({
       contactInfo: null as unknown as Contact,
       loading: true as boolean,
-      showProfile: false as boolean
+      showProfile: false as boolean,
+      newMessageText: ''
     }),
     methods: {
       close() {
@@ -46,6 +56,9 @@ export default defineComponent({
       },
       openProfile() {
         this.showProfile = true
+      },
+      print(e) {
+        this.$toast.show(e)
       }
     },
     watch: {

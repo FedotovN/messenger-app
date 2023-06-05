@@ -3,12 +3,22 @@
         <header class="flex justify-between items-center">
             <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 w-full"/>
         </header>
-        <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="users.length">
+        <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="users.length && !loading">
             <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
         </div>
-        <div class="flex flex-col flex-1 w-full justify-center items-center gap-2 px-3 text-center sm:hidden" v-else>
-            <p class="font-semibold text-gray-700 dark:text-gray-300">Чатов пока нет!</p>
-            <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Чтобы начать, используйте функцию поиска внизу</small>
+        <div class="flex-1 items-center px-3 text-center" v-else>
+            <div class="h-full flex flex-col w-full justify-center gap-2" v-if="!search && !loading">
+                <p class="font-semibold text-gray-700 dark:text-gray-300">Чатов пока нет!</p>
+                <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Чтобы начать, используйте функцию поиска внизу</small>
+            </div>
+            <div class="h-full flex flex-col w-full justify-center items-center gap-4" v-else-if="loading">
+                <base-loader size="medium" />
+                <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Ищем пользователя с именем {{ search }}</small>
+            </div>
+            <div class="h-full flex flex-col w-full justify-center gap-2" v-else-if="search && !loading">
+                <p class="font-semibold text-gray-700 dark:text-gray-300">Тут никого :(</p>
+                <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Пользователя с поможим именем не найдено</small>
+            </div>
         </div>
     </div>
 </template>
