@@ -7,7 +7,10 @@
             <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
         </div>
         <div class="flex-1 items-center px-3 text-center" v-else>
-            <div class="h-full flex flex-col w-full justify-center gap-2" v-if="!search && !loading">
+            <div class="h-full flex flex-col w-full justify-center items-center gap-4" v-if="contactsFetching">
+                <base-loader size="medium" />
+            </div>
+            <div class="h-full flex flex-col w-full justify-center gap-2" v-else-if="!search && !loading">
                 <p class="font-semibold text-gray-700 dark:text-gray-300">Чатов пока нет!</p>
                 <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Чтобы начать, используйте функцию поиска внизу</small>
             </div>
@@ -25,11 +28,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import _ from 'lodash';
 import BaseSearchInput from './BaseSearchInput.vue';
 import ContactItem from './ContactItem.vue';
-import User from '@/classes/auth/User';
 import Contact from '@/classes/chat/Contact';
 export default defineComponent({
     name: "ContactsList",
@@ -38,8 +40,15 @@ export default defineComponent({
         search: "",
         debouncedQuery: null as any,
         loading: false,
-        users: [] as User[]
+        contactsFetching: false,
+        users: [] as Contact[]
     }),
+    async created() {
+        this.contactsFetching = true
+        await this.fetchContacts()
+        this.users = this.getContacts || []
+        this.contactsFetching = false
+    },
     watch: {
         search(newVal: string) {
            if(this.debouncedQuery) {
@@ -47,7 +56,7 @@ export default defineComponent({
             this.loading = false
            }
            if(!newVal.length) {
-            this.users = []
+            this.users = this.getContacts
             return
            }
            this.debouncedQuery =  _.debounce(this.searchUser, 400)
@@ -57,12 +66,16 @@ export default defineComponent({
     },
     methods: {
         ...mapActions('contacts', {
-            getUser: 'fetchUsersByName'
+            getUser: 'fetchUsersByName',
+            fetchContacts: 'fetchCurrentUserContacts'
         }),
         async searchUser(q: string): Promise<void> {
            this.users = await this.getUser({name: q}) as Contact[]
            this.loading = false
         }
+    },
+    computed: {
+        ...mapGetters('contacts', ['getContacts'])
     }
 })
 </script>

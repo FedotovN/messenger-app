@@ -17,6 +17,9 @@ export default {
     name: 'MainLayout',
     components: {
         AppSidebar, AppNavbar
+    },
+    async created() {
+        await this.$store.dispatch('contacts/fetchCurrentUserContacts')
     }
 }
 </script>

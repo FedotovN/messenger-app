@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import messages from '@/utils/messages'
 import UserList from '@/components/UI/Auth/UserList.vue'
 export default {
     components: { UserList },
@@ -39,9 +38,6 @@ export default {
                     password: this.chosenUser.password
                 })
                 this.$router.push('/')
-            }   
-            catch(e) {
-                this.message = messages[e.code] || e
             }
             finally { 
                 this.loading = false

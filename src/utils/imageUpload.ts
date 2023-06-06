@@ -1,22 +1,31 @@
-function getDataURL(inputImage, compress, width, height) {
+type dataURL = {
+    dataUrl: string,
+    additionalData: string,
+    coded: string
+}
+function getDataURL(inputImage: Blob, compress: number, width: number, height: number): Promise<dataURL> {
     return new Promise(resolve => {
         const reader = new FileReader()
         reader.readAsDataURL(inputImage)
-        reader.onload = event => {
-            const imageDataUrl = event.target.result
-            const imageElement = document.createElement('img')
+        reader.onload = function (this: FileReader, event: ProgressEvent<FileReader>): void {
+            const imageDataUrl = (event.target as FileReader).result as string
+            const imageElement: HTMLImageElement = document.createElement('img')
             imageElement.src = imageDataUrl
-            imageElement.onload = e => {
-                const ratio = width / e.target.width,
-                    canvas = document.createElement('canvas'),
-                    ctx = canvas.getContext('2d')
-    
+            imageElement.onload = function (this: GlobalEventHandlers, e: Event) {
+                const ratio = width / (e.target as HTMLImageElement).width,
+                    canvas: HTMLCanvasElement = document.createElement('canvas'),
+                    ctx = canvas.getContext('2d') as CanvasRenderingContext2D
                 canvas.width = width
-                if(!height) canvas.height = e.target.height * ratio
+                if(!height) canvas.height = (e.target as HTMLCanvasElement).height * ratio
                 else canvas.height = height
                 
                 ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height)
                 const newImageDataUrl = ctx.canvas.toDataURL('image/jpeg', compress)
+                console.log({
+                    dataUrl: newImageDataUrl,
+                    additionalData: newImageDataUrl.split(',')[0],
+                    coded: newImageDataUrl.split(',')[1]
+                })
                 resolve({
                     dataUrl: newImageDataUrl,
                     additionalData: newImageDataUrl.split(',')[0],
@@ -26,10 +35,10 @@ function getDataURL(inputImage, compress, width, height) {
         }
     })   
 }
-async function URLtoFile(url){
+async function URLtoFile(url: string): Promise<File | null>{
     try {
         if(url.includes('firebasestorage')) return null
-        const blobbed_response = await (await fetch(url))?.blob(),
+        const blobbed_response: Blob = await (await fetch(url))?.blob(),
           file = new File([blobbed_response], 'File', {type: blobbed_response.type})
         return file
     }
@@ -38,7 +47,7 @@ async function URLtoFile(url){
         throw(e)
     }
 }
-async function getGeneratedAvatar(q = '') {
+async function getGeneratedAvatar(q = ''): Promise<string> {
     if(!q) {
         for(let i = 0; i < 6; i++) {
             q += Math.floor(Math.random() * 47).toString()

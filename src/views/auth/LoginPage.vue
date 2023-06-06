@@ -76,7 +76,6 @@
 <script>
 import ColorThemeSwitcher from '@/components/Config/ColorThemeSwitcher.vue'
 import LanguageSwitcher from '@/components/Config/LanguageSwitcher.vue'
-import messages from '@/utils/messages.js'
 import useVuelidate from '@vuelidate/core'
 import UserList from "@/components/UI/Auth/UserList.vue"
 import { email, required } from '@vuelidate/validators'
@@ -119,7 +118,7 @@ export default {
             }
             catch(e) {
                 this.loading = false
-                this.message = 'form.operations.messages.'+e.code || messages[e.code]
+                this.message = 'form.operations.messages.'+e.code
                 console.warn(e)
             }
             this.loading = false
@@ -135,7 +134,7 @@ export default {
                     message: 'auth/logged-in' }})
             }
             catch(e) {
-                this.message = 'form.operations.messages.'+e.code || messages[e.code]
+                this.message = 'form.operations.messages.'+e.code
                 console.warn(e)
             } 
             this.loading = false
@@ -147,7 +146,7 @@ export default {
     },
     mounted() {
         if(this.$route.query.message)
-            this.$toast.show(this.$t('form.operations.messages.'+this.$route.query.message) || messages[this.$route.query.message] || this.$route.query.message)
+            this.$toast.show(this.$t('form.operations.messages.'+this.$route.query.message))
     }
 }
 </script>

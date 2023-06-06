@@ -51,7 +51,7 @@
 
 <script>
 import _ from "lodash"
-import { getDataURL, URLtoFile, getGeneratedAvatar } from '@/utils/imageUpload.js'
+import { getDataURL, URLtoFile, getGeneratedAvatar } from '@/utils/imageUpload'
 export default {
     props: {
         user: {

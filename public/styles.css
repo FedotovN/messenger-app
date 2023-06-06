@@ -867,6 +867,46 @@ video {
   height: calc(96vh - 8rem);
 }
 
+.h-\[calc\(90vh_-_8rem\)\] {
+  height: calc(90vh - 8rem);
+}
+
+.h-\[calc\(80vh_-_8rem\)\] {
+  height: calc(80vh - 8rem);
+}
+
+.h-\[calc\(80vh\)\] {
+  height: calc(80vh);
+}
+
+.h-\[calc\(80vh_-_12rem\)\] {
+  height: calc(80vh - 12rem);
+}
+
+.h-\[calc\(96vh_-_12rem\)\] {
+  height: calc(96vh - 12rem);
+}
+
+.h-\[calc\(96vh_-_5rem\)\] {
+  height: calc(96vh - 5rem);
+}
+
+.h-\[calc\(96vh_-_6rem\)\] {
+  height: calc(96vh - 6rem);
+}
+
+.h-\[calc\(80vh_-_6rem\)\] {
+  height: calc(80vh - 6rem);
+}
+
+.h-\[calc\(90vh_-_6rem\)\] {
+  height: calc(90vh - 6rem);
+}
+
+.h-\[calc\(92vh_-_6rem\)\] {
+  height: calc(92vh - 6rem);
+}
+
 .max-h-\[3rem\] {
   max-height: 3rem;
 }
@@ -2099,6 +2139,10 @@ video {
 
   .sm\:h-auto {
     height: auto;
+  }
+
+  .sm\:h-\[calc\(96vh_-_6rem\)\] {
+    height: calc(96vh - 6rem);
   }
 
   .sm\:max-h-\[80vh\] {

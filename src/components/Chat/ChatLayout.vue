@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col max-h-[100vh] w-full bg-gray-100 dark:bg-gray-600">
+  <div class="flex flex-col max-h-[100vh] w-full bg-gray-100 dark:bg-gray-600 relative">
     <base-modal v-model="showProfile" v-if="contactInfo">
       <template #header>
         Пользователь {{ contactInfo.name }}
@@ -26,12 +26,12 @@
         <base-loader size="small" />
       </div>
     </header>
-    <main class="flex-1 h-[calc(96vh_-_8rem)]">
+    <main class="sm:h-[calc(96vh_-_6rem)] h-[calc(92vh_-_6rem)]">
       <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full" ref="messages_container">
         <base-message :isCounterMessage="message.sended_by_uid != getUser.uid" v-for="message in messages" :message="message" :key="+message.sended_at"></base-message>
       </div>
     </main>
-    <footer class="min-h-[4rem]">
+    <footer class="min-h-[4rem] absolute bottom-0 w-full">
       <div class="w-full h-full" v-if="contactInfo">
         <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" class="" />
       </div>
@@ -69,14 +69,15 @@ export default defineComponent({
       },
       print(text) {
         const container = this.$refs.messages_container as HTMLDivElement
-        container.scrollTo({top: container.scrollHeight, behavior: 'smooth'})
         this.sendMessage(text)
+        this.$nextTick(() => {
+          container.scrollTo({top: container.scrollHeight, behavior: 'smooth'})
+        })
       },
-      sendMessage(text): void {
-        this.messages.push(
-          new Message(null, new Date(), this.getUser.uid, this.getUser.displayName,
-          this.getUser.photoURL, text, readStatus.SENDED, false)
-        )
+      async sendMessage(text): Promise<void> {
+        const message = new Message(null, new Date(), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDED, false)
+        this.messages.push(message)
+        await this.$store.dispatch('chat/sendMessageToUser', {message, counterId: this.contactInfo.uid})
       }
     },
     watch: {
