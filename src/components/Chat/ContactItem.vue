@@ -1,5 +1,7 @@
 <template>
-  <div class="cursor-pointer min-h-[3.5rem] flex items-center justify-between overflow-hidden hover:bg-gray-300 dark:hover:bg-gray-600 px-2 transition-colors" @click="onClick">
+  <div
+  class="cursor-pointer min-h-[3.5rem] flex items-center justify-between overflow-hidden hover:bg-gray-300 dark:hover:bg-gray-600 px-2 transition-colors" @click="onClick"
+  :class="{'bg-gray-300 dark:bg-gray-600':$route.params.chatId === contact.uid}">
         <div class="flex gap-3 items-center overflow-hidden w-full">
             <div class="min-h-[2.5rem] min-w-[2.5rem] w-[2.5rem] h-[2.5rem] rounded-full bg-gray-300 overflow-hidden">
                 <img :src="contact.photoURL" alt="" v-if="contact.photoURL" class="h-full w-full object-cover">

@@ -26,9 +26,12 @@
         <base-loader size="small" />
       </div>
     </header>
-    <main class="sm:h-[calc(96vh_-_6rem)] h-[calc(92vh_-_6rem)]">
-      <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full" ref="messages_container">
+    <main class="h-[calc(100vh_-_8rem)] relative">
+      <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full relative" ref="messages_container">
         <base-message :isCounterMessage="message.sended_by_uid != getUser.uid" v-for="message in messages" :message="message" :key="+message.sended_at"></base-message>
+      </div>
+      <div class="top-0 left-0 absolute flex flex-col items-center h-full justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.25)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
+        <base-loader size="big" />
       </div>
     </main>
     <footer class="min-h-[4rem] absolute bottom-0 w-full">
@@ -60,6 +63,9 @@ export default defineComponent({
       const container = this.$refs.messages_container as HTMLDivElement
       container.scrollTop = container.scrollHeight
     },
+    async created() {
+      console.log(await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash))
+    },
     methods: {
       close() {
         this.$router.push({name: 'main'})
@@ -78,13 +84,16 @@ export default defineComponent({
         const message = new Message(null, new Date(), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDED, false)
         this.messages.push(message)
         await this.$store.dispatch('chat/sendMessageToUser', {message, counterId: this.contactInfo.uid})
+        this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
       }
     },
     watch: {
       "$route.params.chatId": {
         async handler() {
+          if(!this.$route.params.chatId) return
           this.loading = true
           this.contactInfo = await this.$store.dispatch('contacts/getUserInfoByUid', this.$route.params.chatId)
+          this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
           if(!this.contactInfo && this.$route.name === 'chat') this.$toast.error('Пользователь не найден')
 
           this.loading = false
@@ -93,7 +102,11 @@ export default defineComponent({
       }
     },
     computed: {
-      ...mapGetters('auth', ['getUser'])
+      ...mapGetters('auth', ['getUser']),
+      ...mapGetters('contacts', ['getContacts']),
+      getRoomHash() {
+          return this.getContacts?.find(c => c.uid === this.$route.params.chatId)?.room_hash
+      }
     }
 })
 </script>

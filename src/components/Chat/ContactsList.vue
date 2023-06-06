@@ -56,7 +56,7 @@ export default defineComponent({
             this.loading = false
            }
            if(!newVal.length) {
-            this.users = this.getContacts
+            this.users = this.getContacts || []
             return
            }
            this.debouncedQuery =  _.debounce(this.searchUser, 400)

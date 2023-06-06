@@ -4,7 +4,7 @@
             'hidden sm:flex': chatOpened,
             'w-full': !chatOpened
         }"></contacts-list>
-        <router-view class="h-full" :class="{
+        <router-view class="h-full" v-if="getUser" :class="{
             'hidden sm:block': !chatOpened,
             'sm:w-full overflow-hidden': chatOpened
         }"></router-view>
@@ -13,13 +13,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { mapGetters } from 'vuex';
 import ContactsList from '@/components/Chat/ContactsList.vue';
 export default defineComponent({
     components: { ContactsList },
     computed: {
         chatOpened() {
             return !!this.$route.params.chatId
-        }
+        },
+        ...mapGetters('auth', ['getUser'])
     }
 })
 </script>
