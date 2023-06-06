@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full w-full bg-gray-100 dark:bg-gray-600">
+  <div class="flex flex-col max-h-[100vh] w-full bg-gray-100 dark:bg-gray-600">
     <base-modal v-model="showProfile" v-if="contactInfo">
       <template #header>
         Пользователь {{ contactInfo.name }}
@@ -8,7 +8,7 @@
       <p v-else>Решил не рассказывать о себе ничего!</p>
       <p v-if="contactInfo.email">Почта: {{ contactInfo.email }}</p>
     </base-modal>
-    <header class="flex gap-5 items-center h-16 dark:bg-dark-200 bg-gray-700 shadow px-2 ">
+    <header class="flex gap-5 items-center min-h-[4rem] dark:bg-dark-200 bg-gray-700 shadow px-2 ">
       <div class="flex items-center h-full px-3 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-100 dark:hover:text-gray-100 transition-colors" @click="close">
         <i class="fa-solid fa-angle-left text-3xl"></i>
       </div>
@@ -26,30 +26,40 @@
         <base-loader size="small" />
       </div>
     </header>
-    <main class="flex-1">
-      {{ newMessageText }}
+    <main class="flex-1 h-[calc(96vh_-_8rem)]">
+      <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full" ref="messages_container">
+        <base-message :isCounterMessage="message.sended_by_uid != getUser.uid" v-for="message in messages" :message="message" :key="+message.sended_at"></base-message>
+      </div>
     </main>
-    <footer>
+    <footer class="min-h-[4rem]">
       <div class="w-full h-full" v-if="contactInfo">
-        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print"/>
+        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" class="" />
       </div>
     </footer>
   </div>
 </template>
 <script lang="ts">
-
+import { mapGetters } from "vuex"
+import BaseMessage from "./BaseMessage.vue"
+import readStatus from "@/enums/ReadStatus"
+import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
 import BaseChatInput from "./BaseChatInput.vue"
 import { defineComponent } from "vue"
 export default defineComponent({
     name: "ChatLayout",
-    components: {BaseChatInput},
+    components: {BaseChatInput, BaseMessage},
       data: () => ({
       contactInfo: null as unknown as Contact,
       loading: true as boolean,
       showProfile: false as boolean,
-      newMessageText: ''
+      newMessageText: '',
+      messages: [] as Message[]
     }),
+    mounted() {
+      const container = this.$refs.messages_container as HTMLDivElement
+      container.scrollTop = container.scrollHeight
+    },
     methods: {
       close() {
         this.$router.push({name: 'main'})
@@ -57,8 +67,16 @@ export default defineComponent({
       openProfile() {
         this.showProfile = true
       },
-      print(e) {
-        this.$toast.show(e)
+      print(text) {
+        const container = this.$refs.messages_container as HTMLDivElement
+        container.scrollTo({top: container.scrollHeight, behavior: 'smooth'})
+        this.sendMessage(text)
+      },
+      sendMessage(text): void {
+        this.messages.push(
+          new Message(null, new Date(), this.getUser.uid, this.getUser.displayName,
+          this.getUser.photoURL, text, readStatus.SENDED, false)
+        )
       }
     },
     watch: {
@@ -72,6 +90,9 @@ export default defineComponent({
         },
         immediate: true
       }
+    },
+    computed: {
+      ...mapGetters('auth', ['getUser'])
     }
 })
 </script>

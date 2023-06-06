@@ -61,8 +61,10 @@ export default defineComponent({
         },
         onEnter(e) {
             this.$emit('enter', e.target.value)
-
             this.$emit('update:modelValue', '')
+            this.$nextTick(() => {
+                this.calculateStyles()
+            })  
         },
         onFocus() {
             this.focused = true
@@ -72,6 +74,7 @@ export default defineComponent({
             this.$emit('update:modelValue', this.modelValue + '\n')
             this.$nextTick(() => {
                 this.textarea.scrollTop = this.textarea.scrollHeight
+                this.calculateStyles()
             })
             
         }

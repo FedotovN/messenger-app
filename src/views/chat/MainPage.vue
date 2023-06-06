@@ -6,7 +6,7 @@
         }"></contacts-list>
         <router-view class="h-full" :class="{
             'hidden sm:block': !chatOpened,
-            'sm:w-full': chatOpened
+            'sm:w-full overflow-hidden': chatOpened
         }"></router-view>
     </div>
 </template>
