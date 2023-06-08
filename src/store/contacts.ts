@@ -3,13 +3,19 @@ import Contact from '@/classes/chat/Contact';
 import User from '@/classes/auth/User';
 import { firestore } from '@/firebase/config'
 import { getDocs, getDoc, collection, CollectionReference, DocumentReference, doc, updateDoc } from 'firebase/firestore'
+
+type contactKey = { uid: string; room_hash: string }
 export default {
     namespaced: true,
     state: () => ({
         contacts: [] as Contact[]
     }),
     mutations: {
-        setContacts: (s, p) => s.contacts = p
+        setContacts: (s, p) => s.contacts = p,
+        appendContact: (s, p) => s.contacts.push(p),
+        setContact: (s, {uid, contact}) => s.map(c => { if(c.uid === uid){
+            return contact
+        } else return c})
     },
     getters: {
         getContacts: s => s.contacts
@@ -30,23 +36,39 @@ export default {
             userInfo = (await getDoc(userRef)).data()
             return userInfo as Contact
         },
-        async fetchCurrentUserContacts({ dispatch, commit}): Promise<void> {
+        async fetchContactByUid({dispatch}, contact): Promise<Contact | undefined>{
+            const userInfo = (await dispatch('getUserInfoByUid', contact.uid))
+            if(!userInfo) return
+            const {email, name, photoURL, bio, uid} = userInfo as Contact
+            return {email, name, photoURL, bio, room_hash: contact.room_hash, uid} as Contact
+        },
+        async fetchCurrentUserContacts({ dispatch, commit }): Promise<void> {
             const uid: string = await dispatch('auth/getUid', null, {root: true}),
                   userRef: DocumentReference = doc(firestore, `users/${uid}`)
-            const contacts = ((await getDoc(userRef)).data() as User).contacts as Contact[]
-            commit('setContacts', contacts)
+
+            let contactUIDs = ((await getDoc(userRef)).data() as User)?.contacts as contactKey[]
+            if(!contactUIDs) return
+            
+            const result: Contact[] = [];
+            for(let i = 0; i < contactUIDs.length; i++) {
+                result.push(await dispatch('fetchContactByUid', contactUIDs[i]))
+            }
+            commit('setContacts', result)
         },
         async addNewUserContact({ dispatch, commit, rootGetters }, payload: {uid: string, cuid: string, chatRoomHash: string}): Promise<void> {
-                  const userRef: DocumentReference = doc(firestore, `users/${payload.uid}`),
-                  contact: Contact = {...(await dispatch('getUserInfoByUid', payload.cuid)), room_hash: payload.chatRoomHash, contacts: null},
-                  // Получение списка контактов и проверка на наличие этого контакта
-                  contacts: Contact[] | undefined = ((await getDoc(userRef)).data() as User).contacts,
-                  intersection: Contact | undefined = contacts?.find(c => contact.uid === c.uid)
+
+            const userRef: DocumentReference = doc(firestore, `users/${payload.uid}`),
+            contact = { uid: payload.cuid, room_hash: payload.chatRoomHash },
+            // Получение списка контактов и проверка на наличие этого контакта
+            contacts: Array<contactKey> | undefined = ((await getDoc(userRef)).data() as User).contacts,
+            intersection: contactKey | undefined = contacts?.find(c => contact.uid === c.uid)
             if(intersection) return
             const newContactsList = [...(contacts ? contacts : []), contact];
 
             (await updateDoc(userRef, {contacts: newContactsList}))
-            if(rootGetters['auth/getUser'].uid === payload.uid) commit('setContacts', newContactsList)
+            if(rootGetters['auth/getUser'].uid === payload.uid)
+            commit('appendContact', await dispatch('fetchContactByUid', {uid: payload.cuid, room_hash: payload.chatRoomHash}))
+
         },
         async handshakeUsers({ dispatch }, payload: {cuid: string, chatRoomHash: string}) {
             const uid = await dispatch('auth/getUid', null, {root: true})

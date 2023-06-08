@@ -5,8 +5,13 @@ import cyrb53 from "@/utils/hashGenerator"
 export default {
     namespaced: true,
     state: () => ({
-
+        chats: {}
     }),
+    mutations: {
+        setMessages: (s, payload: {hash, messages: Message[]}) => {
+            s.chats[payload.hash] = payload.messages
+        }
+    },
     actions: {
         async openChatRoom({ dispatch }, payload: {uid: string, cuid: string}): Promise<string> {
             const chatRoomHash: string = cyrb53(payload.uid + payload.cuid)
@@ -22,11 +27,14 @@ export default {
             const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_id}/messages`)   
             await addDoc(chatRoomRef, {...payload.message})
         },
-        async getMessagesListByRoomHash(_, room_hash) {
+        async getMessagesListByRoomHash({ commit }, room_hash) {
             if(!room_hash) return []
             const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_hash}/messages`),
                 q = query(chatRoomRef, orderBy('created_at'))
-            return (await getDocs(q)).docs.map(d => d.data())
+            const messages = (await getDocs(q)).docs.map(d => d.data()) as Message[]
+            console.log({hash: room_hash, messages})
+            commit('setMessages', {hash: room_hash, messages})
+            return messages
         }
     }
 }

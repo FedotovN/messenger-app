@@ -65,7 +65,7 @@
             <i class="fa-solid fa-angle-right"></i>
         </div>
     </div>
-    <div class="flex h-full w-full items-center justify-center flex-col gap-2 text-center py-4" v-else>
+    <div class="flex h-full w-full items-center justify-center flex-col gap-2 text-center py-8" v-else>
         <p class="font-semibold text-gray-700 dark:text-gray-300">{{$t('fallbacks.noUsers')}}</p>
         <small class="text-gray-400">{{$t('fallbacks.createUser')}}</small>
     </div>
