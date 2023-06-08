@@ -26,11 +26,19 @@
         <base-loader size="small" />
       </div>
     </header>
-    <main class="h-[calc(100vh_-_8rem)] relative">
-      <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full relative" ref="messages_container">
-        <base-message :isCounterMessage="message.sended_by_uid != getUser.uid" v-for="message in messages" :message="message" :key="+message.sended_at"></base-message>
+    <main class="sm:h-[calc(100vh_-_8rem)] h-[calc(100vh_-_10.25rem)] relative">
+      <div class="absolute top-2 left-1/2 -translate-x-1/2 z-50">
+        <base-date-badge :date="new Date()"/>
       </div>
-      <div class="top-0 left-0 absolute flex flex-col items-center h-full justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.25)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
+      <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full relative" ref="messages_container">
+        <base-message
+        :isCounterMessage="message.sended_by_uid != getUser.uid"
+        v-for="(message, ind) in messages"
+        :message="message"
+        :key="getMessageKey(message.sended_at)"
+        :placementOrder="getMessagePlacementOrder(ind)"></base-message>
+      </div>
+      <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%_-_1rem)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
         <base-loader size="big" />
       </div>
     </main>
@@ -48,24 +56,19 @@ import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
 import BaseChatInput from "./BaseChatInput.vue"
+import BaseDateBadge from "./BaseDateBadge.vue"
 import { defineComponent } from "vue"
 export default defineComponent({
     name: "ChatLayout",
-    components: {BaseChatInput, BaseMessage},
+    components: {BaseChatInput, BaseMessage, BaseDateBadge},
       data: () => ({
       contactInfo: null as unknown as Contact,
+      messagesContainer: null as unknown as HTMLDivElement,
       loading: true as boolean,
       showProfile: false as boolean,
       newMessageText: '',
       messages: [] as Message[]
     }),
-    mounted() {
-      const container = this.$refs.messages_container as HTMLDivElement
-      container.scrollTop = container.scrollHeight
-    },
-    async created() {
-      console.log(await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash))
-    },
     methods: {
       close() {
         this.$router.push({name: 'main'})
@@ -81,10 +84,18 @@ export default defineComponent({
         })
       },
       async sendMessage(text): Promise<void> {
-        const message = new Message(null, new Date(), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDED, false)
+        if(!text) return
+        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDED, false)
+
         this.messages.push(message)
         await this.$store.dispatch('chat/sendMessageToUser', {message, counterId: this.contactInfo.uid})
         this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
+      },
+      getMessageKey(createdAt) {
+        return +(new Date(JSON.parse(createdAt)))
+      },
+      getMessagePlacementOrder(ind): 'first' | 'last' | 'middle' {
+        return ind === this.messages.length - 1 ? 'last' : ind === 0 ? 'first' : 'middle'
       }
     },
     watch: {
@@ -94,6 +105,12 @@ export default defineComponent({
           this.loading = true
           this.contactInfo = await this.$store.dispatch('contacts/getUserInfoByUid', this.$route.params.chatId)
           this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
+
+          this.container = this.$refs.messages_container as HTMLDivElement
+          this.$nextTick(() => {
+            this.container.scrollTop = this.container.scrollHeight
+          })
+
           if(!this.contactInfo && this.$route.name === 'chat') this.$toast.error('Пользователь не найден')
 
           this.loading = false
@@ -106,7 +123,7 @@ export default defineComponent({
       ...mapGetters('contacts', ['getContacts']),
       getRoomHash() {
           return this.getContacts?.find(c => c.uid === this.$route.params.chatId)?.room_hash
-      }
+      },
     }
 })
 </script>

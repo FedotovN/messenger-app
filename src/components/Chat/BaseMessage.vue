@@ -1,19 +1,23 @@
 <template>
-    <div class="w-full min-h-[4.5rem] overflow-hidden flex" :class="{'justify-end': !isCounterMessage}">
+    <div class="w-full h-auto flex" :class="{'justify-end': !isCounterMessage}">
         <div
-            class="rounded-md w-full min-h-[4.5rem] h-auto sm:w-auto sm:max-w-full min-w-[16rem] shadow-md py-2 inline-flex overflow-hidden"
-            :class="{'bg-gray-900': isCounterMessage,
-                     'bg-gray-300': !isCounterMessage}">
-            <div class="flex gap-2 items-center h-full px-2 self-end">
-                <div class="h-[1.8rem] w-[1.8rem] min-h-[1.8rem] min-w-[1.8rem] rounded-full bg-gray-300 self-start overflow-hidden">
-                    <img :src="message.sended_by_photo_url" class="overflow-hidden h-full w-full object-cover">
-                </div>
-                <div class="flex flex-col gap-1 -mt-1">
-                    <small class="text-xs text-gray-500">{{message.sended_by_name}}</small>
+            class="cursor-pointer rounded-3xl max-w-[calc(100%_-_2rem)] min-h-[1.5rem] h-auto min-w-[4rem] shadow-md inline-flex transition-all p-3"
+            :class="getStyles">
+            <div class="flex gap-2 items-center h-full self-end">
+                <div class="flex flex-col gap-1">
                     <p
-                        class="text-sm overflow-hidden text-ellipsis"
+                        class="text-sm text-ellipsis px-2 -mt-1"
                         :class="{'text-gray-300': isCounterMessage, 
                                  'text-gray-700': !isCounterMessage}">{{message.content}}</p>
+                    <div class="flex justify-between items-center px-2">
+                        <div class="flex gap-2 pr-2 items-center">
+                            <small class="text-gray-500 text-xs">Отправлено</small>
+                            <div class="h-1 w-1 bg-gray-500 rounded-full"></div>
+                            <small class="text-gray-500 text-xs">{{filterDate(message.sended_at)}}</small>
+                        </div>
+                        <div class="h-1 w-1 bg-gray-500 rounded-full mr-2"></div>
+                        <div class="text-gray-600 text-xs">Изменено</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -34,9 +38,37 @@ export default defineComponent({
             type: Boolean,
             required: true,
             default: true
+        },
+        placementOrder: {
+            type: String as PropType<'first' | 'last' | 'middle'>,
+            required: false,
+            default: 'middle'
         }
     },
-    methods: {},
+    methods: {
+        filterDate(stringified) {
+            const date = (new Date(JSON.parse(stringified)))
+            return Intl.DateTimeFormat('Ru-ru', {hour:'2-digit', minute: '2-digit'}).format(date)
+        }
+    },
+    computed: {
+        getBorderStyles(): string {
+            if(this.placementOrder === 'middle') return ''
+            if(this.isCounterMessage) {
+                if(this.placementOrder === 'first') return 'message-first-counter'
+                else return 'message-last-counter'
+            }
+            else if(!this.isCounterMessage) {
+                if(this.placementOrder === 'first') return 'message-first'
+                else return 'message-last'
+            }
+            return ''
+        },
+        getStyles(): string {
+            const c = this.isCounterMessage
+            return this.getBorderStyles + ' ' + `${c ? 'bg-gray-900' : 'bg-blue-300'}`
+        }
+    },
     data: () => ({})
 })
 </script>

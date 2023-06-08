@@ -1,5 +1,5 @@
 import { firestore } from "@/firebase/config"
-import { CollectionReference, collection, addDoc, getDocs } from "firebase/firestore"
+import { CollectionReference, collection, addDoc, getDocs, query, orderBy, Query } from "firebase/firestore"
 import Message from "@/classes/chat/Message"
 import cyrb53 from "@/utils/hashGenerator"
 export default {
@@ -19,16 +19,14 @@ export default {
                   cuid = payload.counterId
             let room_id: string | undefined = rootGetters['contacts/getContacts']?.find(contact => contact.uid === cuid)?.room_hash
             if(!room_id) room_id = await dispatch('openChatRoom', {uid, cuid})
-            console.log(room_id)
-            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_id}/messages`)
-
+            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_id}/messages`)   
             await addDoc(chatRoomRef, {...payload.message})
         },
         async getMessagesListByRoomHash(_, room_hash) {
             if(!room_hash) return []
-            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_hash}/messages`)
-            
-            return (await getDocs(chatRoomRef)).docs.map(d => d.data())
+            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_hash}/messages`),
+                q = query(chatRoomRef, orderBy('created_at'))
+            return (await getDocs(q)).docs.map(d => d.data())
         }
     }
 }
