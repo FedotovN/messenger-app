@@ -14,7 +14,7 @@
                 ref="imageWrapper"
                 @click="$refs.fileInput.click()"
                 class="flex justify-center items-center w-44 h-44 sm:w-[6rem] sm:h-[6rem] rounded-full bg-gray-200 cursor-pointer transition-all hover:opacity-75 overflow-hidden" title="Загрузка фото">
-                    <img :src="form.photoUrl" :alt="form.name" :class="imageLoading || !form.photoUrl ? 'hidden appearance-none' : 'h-full w-full object-cover'">
+                    <img :src="form.photoURL" :alt="form.name" :class="imageLoading || !form.photoURL ? 'hidden appearance-none' : 'h-full w-full object-cover'">
                 </div>
                 <input
                 @change="imageUpload"
@@ -64,7 +64,7 @@ export default {
             form: {
                 name: '',
                 bio: '',
-                photoUrl: '',
+                photoURL: '',
                 email: ''
             },
             loading: false,
@@ -94,7 +94,7 @@ export default {
             try {
                 const inputImage = e.target.files[0]
                 this.imageLoading = true
-                this.form.photoUrl = (await getDataURL(inputImage, 90, this.width)).dataUrl 
+                this.form.photoURL = (await getDataURL(inputImage, 90, this.width)).dataUrl 
                 this.imageLoading = false
             }
             catch {
@@ -105,7 +105,7 @@ export default {
         async imageGenerate() {
             try {
                 this.imageLoading = true
-                this.form.photoUrl = (await getGeneratedAvatar())
+                this.form.photoURL = (await getGeneratedAvatar())
             }
             catch(e) {
                 console.warn(e)
@@ -116,7 +116,7 @@ export default {
             this.loading = true
             let profile_body = {...this.form}
             try {
-                const file = await URLtoFile(this.form.photoUrl)
+                const file = await URLtoFile(this.form.photoURL)
                 profile_body = {
                     ...this.form,
                     profile_photo_file: file
@@ -130,7 +130,7 @@ export default {
                 email: this.user.email,
                 uid: this.user.uid,
                 name: this.form.name,
-                photoUrl: this.form.photoUrl,
+                photoURL: this.form.photoURL,
                 password: this.user.password,
                 bio: this.form.bio
             })
@@ -144,7 +144,7 @@ export default {
             if(this.checked) {
                 this.imageLoading = true
                 this.debouncedAvatarQuery = _.debounce(async function(q){
-                    this.form.photoUrl = await getGeneratedAvatar(q)
+                    this.form.photoURL = await getGeneratedAvatar(q)
                     this.imageLoading = false
                 }, 850).bind(this)(newVal)
             }
@@ -152,7 +152,7 @@ export default {
         async checked(newVal, oldVal){
             if(!oldVal && newVal && this.form.name) {
                 this.imageLoading = true
-                this.form.photoUrl = await getGeneratedAvatar(this.form.name)
+                this.form.photoURL = await getGeneratedAvatar(this.form.name)
                 this.imageLoading = false
             }
         }

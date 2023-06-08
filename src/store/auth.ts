@@ -69,7 +69,7 @@ export default {
                         password,
                         uid: user.uid,
                         name: user.displayName,
-                        photoUrl: user.photoURL
+                        photoURL: user.photoURL
                     }
                     dispatch('cacheUser', info)
                 }
@@ -109,16 +109,16 @@ export default {
                 throw(e)
             }
         },
-        cacheUser(_,{email, password, uid, name, bio, photoUrl}) {
+        cacheUser(_,{email, password, uid, name, bio, photoURL}) {
             try {
-                const userInfo = {email, password, uid, name, photoUrl}
+                const userInfo = {email, password, uid, name, photoURL}
 
                 let users = JSON.parse(""+localStorage.getItem('task-tracker-users')),
                     updated = false
                 users = users?.map(user => {
                     if(user.uid === uid) {
                         updated = true
-                        return {email, password, uid, bio, name, photoUrl}
+                        return {email, password, uid, bio, name, photoURL}
                     }
                     else return user
                 })
