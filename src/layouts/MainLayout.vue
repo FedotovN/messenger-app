@@ -8,7 +8,7 @@
             <div class="flex justify-center items-center flex-col gap-4 h-full w-full" v-else>
                 <base-loader size="medium"></base-loader>
                 <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                    C возвращением, {{ username }}!
+                    C возвращением, {{ username }}! 👋
                 </p>
             </div>
         </div>
@@ -29,12 +29,16 @@ export default {
     },
     async created() {
         this.contactsLoading = true
-        await this.$store.dispatch('contacts/fetchCurrentUserContacts')
+        if(!this.userContacts)
+            await this.$store.dispatch('contacts/fetchCurrentUserContacts')
         this.contactsLoading = false
     },
     computed: {
         username() {
-            return this.$store.getters['auth/getUser'].displayName
+           return this.$store.getters['auth/getUser'].displayName
+        },
+        userContacts() {
+            return this.$store.getters['contacts/getContacts'].length
         }
     },
 }

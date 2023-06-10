@@ -6,12 +6,8 @@
         <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="users.length && !loading && !contactsFetching">
             <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
         </div>
-        <div class="flex-1 items-center px-3 text-center" v-else>
-            <div class="h-full flex flex-col w-full justify-center items-center gap-4" v-if="contactsFetching">
-                <base-loader size="medium" />
-                <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">Очень старательно загружаемся, <br> чтобы потом <strong>быстрее ⚡</strong> работать!</p>
-            </div>
-            <div class="h-full flex flex-col w-full justify-center gap-2" v-else-if="!search && !loading">
+        <div class="flex-1 items-center px-3 text-center" v-else-if="!contactsFetching">
+            <div class="h-full flex flex-col w-full justify-center gap-2" v-if="!search && !loading">
                 <p class="font-semibold text-gray-700 dark:text-gray-300">Чатов пока нет!</p>
                 <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Чтобы начать, используйте функцию поиска внизу</small>
             </div>
@@ -23,6 +19,10 @@
                 <p class="font-semibold text-gray-700 dark:text-gray-300">Тут никого :(</p>
                 <small class="text-xs font-semibold text-gray-500 dark:text-gray-400">Пользователя с поможим именем не найдено</small>
             </div>
+        </div>
+        <div class="h-full flex flex-col w-full justify-center items-center gap-4" v-else>
+            <base-loader size="medium" />
+            <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">Очень старательно загружаемся, <br> чтобы потом <strong>быстрее ⚡</strong> работать!</p>
         </div>
     </div>
 </template>
@@ -46,10 +46,15 @@ export default defineComponent({
     }),
     async created() {
         this.contactsFetching = true
-        await this.fetchContacts()
+
+        if(!this.getContacts.length) await this.fetchContacts()
+
         this.users = this.getContacts || []
+
         const hashes = this.users.map((u: Contact) => u.room_hash)
-        await this.$store.dispatch('chat/getAllMessagesByRoomHashes', hashes)
+
+        if(!this.isPreloaded)
+            await this.$store.dispatch('chat/getAllMessagesByRoomHashes', hashes)
 
         this.contactsFetching = false
     },
@@ -79,7 +84,8 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapGetters('contacts', ['getContacts'])
+        ...mapGetters('contacts', ['getContacts']),
+        ...mapGetters('chat', ['isPreloaded']),
     }
 })
 </script>

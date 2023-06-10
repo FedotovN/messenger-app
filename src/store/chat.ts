@@ -24,7 +24,8 @@ export default {
     getters: {
         getRoomInfoByHash: (state) => (hash) => {
             return state.chats[hash]
-        }
+        },
+        isPreloaded: (s): boolean => !!Object.keys(s.chats).length
     },
     actions: {
         async openChatRoom({ dispatch }, payload: {uid: string, cuid: string}): Promise<string> {
