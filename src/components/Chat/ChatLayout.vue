@@ -26,20 +26,10 @@
         <base-loader size="small" />
       </div>
     </header>
-    <main class="sm:h-[calc(100vh_-_8rem)] h-[calc(100vh_-_10.25rem)] relative">
-      <div class="absolute top-2 left-1/2 -translate-x-1/2 z-50">
-        <base-date-badge :date="new Date()"/>
-      </div>
-      <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full relative" ref="messages_container">
-        <base-message
-        :isCounterMessage="message.sended_by_uid != getUser.uid"
-        v-for="(message, ind) in messages"
-        :message="message"
-        :key="getMessageKey(message.sended_at)"
-        :placementOrder="getMessagePlacementOrder(ind)"></base-message>
-      </div>
+    <main class="flex-1">
+      <messages-list :messages="messages" :uid="getUser.uid" v-if="messages?.length"/>
       <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%_-_1rem)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
-        <base-loader size="big" />
+          <base-loader size="big" />
       </div>
     </main>
     <footer class="min-h-[4rem] absolute bottom-0 w-full">
@@ -51,22 +41,23 @@
 </template>
 <script lang="ts">
 import { mapGetters } from "vuex"
-import BaseMessage from "./BaseMessage.vue"
 import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
+import IChatInfo from "@/interfaces/ChatInfo"
 import BaseChatInput from "./BaseChatInput.vue"
-import BaseDateBadge from "./BaseDateBadge.vue"
+import MessagesList from "./MessagesList.vue"
 import { defineComponent } from "vue"
 export default defineComponent({
     name: "ChatLayout",
-    components: {BaseChatInput, BaseMessage, BaseDateBadge},
+    components: { BaseChatInput, MessagesList },
       data: () => ({
       contactInfo: null as unknown as Contact,
       messagesContainer: null as unknown as HTMLDivElement,
-      loading: true as boolean,
+      loading: false as boolean,
       showProfile: false as boolean,
       newMessageText: '',
+      chatInfo: {} as IChatInfo,
       messages: [] as Message[]
     }),
     methods: {
@@ -90,30 +81,27 @@ export default defineComponent({
         this.messages.push(message)
         await this.$store.dispatch('chat/sendMessageToUser', {message, counterId: this.contactInfo.uid})
         this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
-      },
-      getMessageKey(createdAt) {
-        return +(new Date(JSON.parse(createdAt)))
-      },
-      getMessagePlacementOrder(ind): 'first' | 'last' | 'middle' {
-        return ind === this.messages.length - 1 ? 'last' : ind === 0 ? 'first' : 'middle'
       }
     },
     watch: {
       "$route.params.chatId": {
-        async handler() {
+        handler(v) {
           if(!this.$route.params.chatId) return
-          this.loading = true
-          this.contactInfo = await this.$store.dispatch('contacts/getUserInfoByUid', this.$route.params.chatId)
-          this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
-
-          this.container = this.$refs.messages_container as HTMLDivElement
-          this.$nextTick(() => {
-            this.container.scrollTop = this.container.scrollHeight
+          // this.loading = true
+          
+          this.contactInfo = this.getContacts.find(c => {
+            return c.uid === v
           })
 
-          if(!this.contactInfo && this.$route.name === 'chat') this.$toast.error('Пользователь не найден')
+          this.chatInfo = this.$store.getters['chat/getRoomInfoByHash'](this.getRoomHash)
+          this.messages = this.chatInfo?.messages
+          console.log(this.chatInfo)
+          if(!this.contactInfo && this.$route.name === 'chat'){
+            this.$toast.error('Пользователь не найден')
+            this.$router.push({name: 'main'})
+          }
 
-          this.loading = false
+          // this.loading = false
         },
         immediate: true
       }
