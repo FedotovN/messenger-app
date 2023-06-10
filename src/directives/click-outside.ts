@@ -15,6 +15,6 @@ export default {
         })
     },
     unmounted() {
-        removeEventListener('click', document)
+        removeEventListener('click', this)
     }
 }

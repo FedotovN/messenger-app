@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { auth } from '@/firebase/config'
-import { messages, locale} from '@/i18n/index.js'
+import { messages, locale} from '@/i18n'
 const routes = [
   {
     path: '/',

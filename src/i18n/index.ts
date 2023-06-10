@@ -3,7 +3,8 @@ import en from './en.json'
 import { createI18n } from 'vue-i18n'
 
 const browserLanguage = navigator.language.slice(0,3),
-      l = JSON.parse(localStorage.getItem('task-tracker-config'))?.language,
+      stringified = localStorage.getItem('task-tracker-config') as string,
+      l = JSON.parse(stringified)?.language,
       locale = l ? l : browserLanguage ? browserLanguage : 'en',
       options = {
         locale,
@@ -13,7 +14,6 @@ const browserLanguage = navigator.language.slice(0,3),
         ru,
         en
       }
-
 const messages = Object.assign(languages),
       i18n = createI18n({
           legacy: true,
