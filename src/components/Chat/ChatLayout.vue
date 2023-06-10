@@ -8,15 +8,15 @@
       <p v-else>Решил не рассказывать о себе ничего!</p>
       <p v-if="contactInfo.email">Почта: {{ contactInfo.email }}</p>
     </base-modal>
-    <header class="flex gap-5 items-center min-h-[4rem] dark:bg-dark-200 bg-gray-700 shadow px-2 ">
-      <div class="flex items-center h-full px-3 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-100 dark:hover:text-gray-100 transition-colors" @click="close">
-        <i class="fa-solid fa-angle-left text-3xl"></i>
+    <header class="flex gap-5 items-center min-h-[4.35rem] dark:bg-dark-200 bg-gray-700 shadow pr-2 ">
+      <div class="flex items-center justify-center h-full w-16 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-100 dark:hover:text-gray-100 transition-colors" @click="close">
+        <i class="fa-solid fa-angle-left text-xl"></i>
       </div>
       <div class="flex gap-2 items-center h-full cursor-pointer " @click="openProfile" v-if="!loading">
         <div class="flex items-center justify-center min-h-[3rem] min-w-[3rem] max-h-[3rem] max-w-[3rem] bg-gray-300 rounded-full overflow-hidden">
-          <img :src="contactInfo.photoURL" v-if="contactInfo.photoURL" alt="" class="h-full w-full object-cover">
+          <img :src="contactInfo?.photoURL" v-if="contactInfo?.photoURL" alt="" class="h-full w-full object-cover">
         </div>
-        <div class="flex-1 overflow-hidden" v-if="contactInfo.name">
+        <div class="flex-1 overflow-hidden" v-if="contactInfo?.name">
           <p class="font-semibold text-ellipsis overflow-hidden w-full dark:text-gray-300 text-gray-300">
             {{ contactInfo.name }}
           </p>
@@ -68,11 +68,8 @@ export default defineComponent({
         this.showProfile = true
       },
       print(text) {
-        const container = this.$refs.messages_container as HTMLDivElement
+        this.messagesContainer = this.$refs.messages_container as HTMLDivElement
         this.sendMessage(text)
-        this.$nextTick(() => {
-          container.scrollTo({top: container.scrollHeight, behavior: 'smooth'})
-        })
       },
       async sendMessage(text): Promise<void> {
         if(!text) return
@@ -81,27 +78,42 @@ export default defineComponent({
         this.messages.push(message)
         await this.$store.dispatch('chat/sendMessageToUser', {message, counterId: this.contactInfo.uid})
         this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
+      },
+      async getContactInfo(): Promise<Contact> {
+        const counterUid = this.$route.params.chatId
+
+        let contact = this.getContacts.find(c => {
+          return c.uid === counterUid
+        })
+        if(!contact) {
+          contact = await this.$store.dispatch('contacts/getUserInfoByUid', this.$route.params.chatId)
+        }
+        return contact
+      },
+      async getChatInfo() {
+        this.chatInfo = this.$store.getters['chat/getRoomInfoByHash'](this.getRoomHash)
+        if(!this.chatInfo?.messages) {
+          await this.$store.dispatch('chat/getRoomInfoByHash', this.getRoomHash)
+          this.chatInfo = this.getRoomInfoByHash(this.getRoomHash)
+        }
+        this.messages = this.chatInfo?.messages || []
       }
     },
     watch: {
       "$route.params.chatId": {
-        handler(v) {
+        async handler(v) {
           if(!this.$route.params.chatId) return
-          // this.loading = true
-          
-          this.contactInfo = this.getContacts.find(c => {
-            return c.uid === v
-          })
+          this.loading = true
 
-          this.chatInfo = this.$store.getters['chat/getRoomInfoByHash'](this.getRoomHash)
-          this.messages = this.chatInfo?.messages
-          console.log(this.chatInfo)
+          this.contactInfo = await this.getContactInfo()  
+          this.getChatInfo()
+
+          this.loading = false
           if(!this.contactInfo && this.$route.name === 'chat'){
-            this.$toast.error('Пользователь не найден')
-            this.$router.push({name: 'main'})
+            this.$router.push({name: 'main'}).then(()=>{
+              this.$toast.error('Пользователь не найден')
+            })
           }
-
-          // this.loading = false
         },
         immediate: true
       }
@@ -109,6 +121,7 @@ export default defineComponent({
     computed: {
       ...mapGetters('auth', ['getUser']),
       ...mapGetters('contacts', ['getContacts']),
+      ...mapGetters('chat', ['getRoomInfoByHash']),
       getRoomHash() {
           return this.getContacts?.find(c => c.uid === this.$route.params.chatId)?.room_hash
       },

@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import Message from '@/classes/chat/Message';
+import { filterDateFromJSONString } from "@/utils/dateFilter"
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({
     name: 'BaseMessage',
@@ -47,8 +48,7 @@ export default defineComponent({
     },
     methods: {
         filterDate(stringified) {
-            const date = (new Date(JSON.parse(stringified)))
-            return Intl.DateTimeFormat('Ru-ru', {hour:'2-digit', minute: '2-digit'}).format(date)
+            return filterDateFromJSONString(stringified)
         }
     },
     computed: {

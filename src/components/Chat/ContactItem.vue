@@ -9,13 +9,12 @@
             <div class="flex flex-col overflow-hidden w-full">
                 <div class="w-full flex overflow-hidden justify-between items-center">
                     <p class="flex-1 text-md font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-300 text-gray-700">{{contact.name}}</p> 
-                    <div class="h-2 w-2 bg-green-300 rounded-full"></div>
-                    <div class="h-2 w-2 bg-red-300 rounded-full"></div>
-                    <div class="h-2 w-2 dark:bg-gray-500 bg-gray-400  rounded-full"></div>
+                    <div class="flex items-center justify-center text-xs h-[1rem] min-w-[1rem] p-1 rounded-full bg-green-300 text-gray-700 font-bold">1</div>
                 </div>  
-                <div class="w-full flex overflow-hidden justify-between">
-                    <small class="flex-1 text-xs font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-500 text-gray-500">{{contact.name}} 111111111111111111111111111111111111111111</small>
-                    <small class="pl-1 text-xs font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-400 text-gray-600">12:30</small>
+                <div class="w-full flex overflow-hidden justify-between" v-if="lastMessage">
+                    <small class="flex-1 text-xs font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-500 text-gray-500">
+                        <span class="text-gray-400">{{lastMessage.sended_by_name}}</span>: {{ lastMessage.content }}</small>
+                    <small class="pl-1 text-xs font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-400 text-gray-600">{{ filteredDate }}</small>
                 </div>
             </div>
         </div>  
@@ -24,7 +23,9 @@
 
 <script lang="ts">
 import {defineComponent, PropType} from "vue"
+import { filterDateFromJSONString } from "@/utils/dateFilter";
 import Contact from "@/classes/chat/Contact";
+import Message from "@/classes/chat/Message";
 export default defineComponent({
     name: 'ContactItem',
     props: {
@@ -36,6 +37,14 @@ export default defineComponent({
     methods: {
         onClick() {
             this.$router.push({name: 'chat', params: {chatId: this.contact.uid}})
+        }
+    },
+    computed: {
+        lastMessage() {
+            return this.$store.getters['chat/getLastMessageByRoomHash'](this.contact.room_hash) as Message
+        },
+        filteredDate() {
+            return filterDateFromJSONString(this.lastMessage?.sended_at)
         }
     }
 })

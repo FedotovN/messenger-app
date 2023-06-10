@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-col justify-between bg-gray-700 dark:bg-dark-300 left-0 h-full sm:shadow-none shadow-xl sm:relative sm:flex hidden px-2 py-2">
+  <div class="flex-col justify-between bg-gray-700 dark:bg-dark-300 left-0 h-full sm:shadow-none shadow-xl sm:relative sm:flex hidden px-2 pb-2">
     <header class="flex w-full justify-center py-4">
         <avatar-badge v-if="user" :user="user" fallback-name="main" />
     </header>

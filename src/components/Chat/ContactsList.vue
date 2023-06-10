@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 py-6 overflow-hidden w-[300px] ">
+    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 py-4 overflow-hidden w-[300px] ">
         <header class="flex justify-between items-center">
             <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 w-full"/>
         </header>
@@ -22,7 +22,7 @@
         </div>
         <div class="h-full flex flex-col w-full justify-center items-center gap-4" v-else>
             <base-loader size="medium" />
-            <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">Очень старательно загружаемся, <br> чтобы потом <strong>быстрее ⚡</strong> работать!</p>
+            <p class="text-xs text-center font-semibold text-gray-700 dark:text-gray-300">Очень старательно загружаемся, <br> чтобы потом <strong>быстрее ⚡</strong> работать!</p>
         </div>
     </div>
 </template>

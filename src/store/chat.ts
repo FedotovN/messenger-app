@@ -9,8 +9,8 @@ export default {
         chats: {}
     }),
     mutations: {
-        setMessages: (s, payload: {hash, messages: Message[]}) => {
-            s.chats[payload.hash] = payload.messages
+        setRoomInfo: (s, info: IChatInfo) => {
+            s.chats[info.hash] = info
         },
         setAllMessages: (s, infos: IChatInfo[]) => {
             infos.forEach(c => {
@@ -24,6 +24,9 @@ export default {
     getters: {
         getRoomInfoByHash: (state) => (hash) => {
             return state.chats[hash]
+        },
+        getLastMessageByRoomHash: (state) => (hash) => {
+            return state.chats[hash]?.last_message
         },
         isPreloaded: (s): boolean => !!Object.keys(s.chats).length
     },
@@ -47,10 +50,19 @@ export default {
             const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_hash}/messages`),
                 q = query(chatRoomRef, orderBy('created_at'))
             const messages = (await getDocs(q)).docs.map(d => d.data()) as Message[]
-            commit('setMessages', {hash: room_hash, messages})
+            const room_info: IChatInfo = {hash: room_hash, messages}
+            commit('setRoomInfo', room_info)
             return messages
         },
+        async getRoomInfoByHash({ commit, dispatch }, hash) {
+            const info: IChatInfo = {
+                hash,
+                messages: await dispatch('getMessagesListByRoomHash', hash)
+            }
+            commit('setRoomInfo', info)
+        },
         async getAllMessagesByRoomHashes({ commit, dispatch }, room_hashes: string[]) {
+            console.time('messages prefetch')
             const resulted: IChatInfo[] = [];
             for(let i = 0; i < room_hashes.length; i++) {
                 const hash = room_hashes[i],
@@ -62,7 +74,8 @@ export default {
 
                 resulted.push(info)
             }
-            console.log(resulted)
+            console.log('Get all user messages: ',resulted)
+            console.timeEnd('messages prefetch')
             commit('setAllMessages', resulted)
         }
     }
