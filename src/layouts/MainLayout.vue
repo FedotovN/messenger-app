@@ -36,7 +36,7 @@ export default {
         username() {
             return this.$store.getters['auth/getUser'].displayName
         }
-    }
+    },
 }
 </script>
 

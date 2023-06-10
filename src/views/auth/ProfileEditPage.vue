@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-full bg-white dark:bg-dark-200 sm:rounded sm:shadow sm:h-auto flex justify-center items-center">
+    <div class="w-full h-full bg-white dark:bg-dark-200 sm:rounded sm:shadow sm:h-auto flex justify-center items-center overflow-y-scroll scrollbar-hide">
         <profile-edit v-if="user" :user="user" @close="redirect"/>
     </div>
 </template>
