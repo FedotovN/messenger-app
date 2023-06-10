@@ -57,6 +57,12 @@ export default {
                 label: 'Настройки',
                 icon: 'fa-solid fa-gear',
                 callback: 'configure'
+            },
+            {   
+                name: 'logout',
+                label: 'Выход',
+                icon: 'fa-solid fa-right-from-bracket',
+                callback: 'onLogoutTap'
             }
         ],
         showModalSearch: false,
