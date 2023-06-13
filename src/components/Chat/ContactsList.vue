@@ -29,11 +29,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import _ from 'lodash';
 import BaseSearchInput from './BaseSearchInput.vue';
 import ContactItem from './ContactItem.vue';
 import Contact from '@/classes/chat/Contact';
+import { Unsubscribe } from 'firebase/auth';
+import { QuerySnapshot, DocumentData, DocumentChange } from '@firebase/firestore';
 export default defineComponent({
     name: "ContactsList",
     components: { BaseSearchInput, ContactItem },
@@ -42,7 +44,9 @@ export default defineComponent({
         debouncedQuery: null as any,
         loading: false,
         contactsFetching: false,
-        users: [] as Contact[]
+        contactsListener: null as unknown as Unsubscribe,
+        users: [] as Contact[],
+        firstUpload: true
     }),
     async created() {
         this.contactsFetching = true
@@ -57,6 +61,21 @@ export default defineComponent({
             await this.$store.dispatch('chat/getAllMessagesByRoomHashes', hashes)
 
         this.contactsFetching = false
+
+        this.contactsListener = await this.addListener((snapshot: QuerySnapshot<DocumentData>) => {
+            // Предотвращаем первый запуск, поскольку изначально контакты подгружаются сверху
+            if(this.firstUpload){
+                this.firstUpload = false
+                return
+            }
+            snapshot.docChanges().forEach(async (d: DocumentChange<DocumentData>) => {
+                if(d.type === 'added') {
+                    const { uid } = d.doc.data()
+                    this.appendContact(await this.getInfo(uid))
+                    console.log(`New Contact Here!: ${d.doc.data().uid}`)
+                }
+            })
+        })
     },
     watch: {
         search(newVal: string) {
@@ -74,9 +93,12 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapMutations('contacts', ['appendContact']),
         ...mapActions('contacts', {
             getUser: 'fetchUsersByName',
-            fetchContacts: 'fetchCurrentUserContacts'
+            fetchContacts: 'fetchCurrentUserContacts',
+            addListener: 'addContactListListenter',
+            getInfo: 'getUserInfoByUid'
         }),
         async searchUser(q: string): Promise<void> {
            this.users = await this.getUser({name: q}) as Contact[]
@@ -84,6 +106,7 @@ export default defineComponent({
         }
     },
     computed: {
+        ...mapGetters('auth', {currUser: 'getUser'}),
         ...mapGetters('contacts', ['getContacts']),
         ...mapGetters('chat', ['isPreloaded']),
     }

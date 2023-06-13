@@ -1,8 +1,9 @@
 import { firestore } from "@/firebase/config"
-import { CollectionReference, collection, addDoc, getDocs, query, orderBy, Query } from "firebase/firestore"
+import { CollectionReference, DocumentData, collection, onSnapshot, addDoc, getDocs, query, orderBy, Query, QuerySnapshot } from "firebase/firestore"
 import Message from "@/classes/chat/Message"
 import IChatInfo from "@/interfaces/ChatInfo"
 import cyrb53 from "@/utils/hashGenerator"
+import { Unsubscribe } from "firebase/auth"
 export default {
     namespaced: true,
     state: () => ({
@@ -19,6 +20,9 @@ export default {
                     last_message: c.last_message
                 }
             })
+        },
+        appendMessageToHash: (s, payload: {hash, message: Message}) => {
+            s.chats[payload.hash].messages.push(payload.message)
         }
     },
     getters: {
@@ -59,6 +63,7 @@ export default {
                 hash,
                 messages: await dispatch('getMessagesListByRoomHash', hash)
             }
+            if(!info.hash) return
             commit('setRoomInfo', info)
         },
         async getAllMessagesByRoomHashes({ commit, dispatch }, room_hashes: string[]) {
@@ -77,6 +82,14 @@ export default {
             console.log('Get all user messages: ',resulted)
             console.timeEnd('messages prefetch')
             commit('setAllMessages', resulted)
+        },
+        setChatListenerByRoomHash(_, 
+            payload: {hash, callback: (snapshot: QuerySnapshot<DocumentData>) => void}): 
+            Unsubscribe {
+            const chatRef: CollectionReference =
+                                collection(firestore, `chats/${payload.hash}/messages`)
+            const unlisten = onSnapshot(chatRef, payload.callback)
+            return unlisten
         }
     }
 }

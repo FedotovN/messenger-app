@@ -1,8 +1,10 @@
 /*eslint-disable*/
 import Contact from '@/classes/chat/Contact';
-import User from '@/classes/auth/User';
 import { firestore } from '@/firebase/config'
-import { getDocs, getDoc, collection, CollectionReference, DocumentReference, doc, updateDoc } from 'firebase/firestore'
+import { Unsubscribe } from 'firebase/auth';
+import { getDocs, getDoc, collection,
+    CollectionReference, DocumentReference, doc,
+    DocumentData, setDoc, onSnapshot, QuerySnapshot } from 'firebase/firestore'
 
 type contactKey = { uid: string; room_hash: string }
 export default {
@@ -18,7 +20,8 @@ export default {
         } else return c})
     },
     getters: {
-        getContacts: s => s.contacts
+        getContacts: s => s.contacts,
+
     },
     actions: {
         async fetchUsersByName({dispatch}: any, { name }: {name: string}): Promise<Object[]> {
@@ -44,9 +47,8 @@ export default {
         },
         async fetchCurrentUserContacts({ dispatch, commit }): Promise<void> {
             const uid: string = await dispatch('auth/getUid', null, {root: true}),
-                  userRef: DocumentReference = doc(firestore, `users/${uid}`)
-
-            let contactUIDs = ((await getDoc(userRef)).data() as User)?.contacts as contactKey[]
+                  contactsRef: CollectionReference = collection(firestore, `users/${uid}/contacts`)
+            let contactUIDs = ((await getDocs(contactsRef)).docs.map(c => ({...c.data()}) as contactKey))
             if(!contactUIDs) return
             
             const result: Contact[] = [];
@@ -57,24 +59,32 @@ export default {
         },
         async addNewUserContact({ dispatch, commit, rootGetters }, payload: {uid: string, cuid: string, chatRoomHash: string}): Promise<void> {
 
-            const userRef: DocumentReference = doc(firestore, `users/${payload.uid}`),
+            const contactsRef: CollectionReference = collection(firestore, `users/${payload.uid}/contacts`),
             contact = { uid: payload.cuid, room_hash: payload.chatRoomHash },
-            // Получение списка контактов и проверка на наличие этого контакта
-            contacts: Array<contactKey> | undefined = ((await getDoc(userRef)).data() as User).contacts,
+
+            contacts: Array<contactKey> | undefined = (await getDocs(contactsRef)).docs.map(c => {
+                const data = c.data()
+                return {room_hash: data.room_hash, uid: data.uid}
+            }),
             intersection: contactKey | undefined = contacts?.find(c => contact.uid === c.uid)
             if(intersection) return
-            const newContactsList = [...(contacts ? contacts : []), contact];
 
-            (await updateDoc(userRef, {contacts: newContactsList}))
-            if(rootGetters['auth/getUser'].uid === payload.uid)
-            commit('appendContact', await dispatch('fetchContactByUid', {uid: payload.cuid, room_hash: payload.chatRoomHash}))
+            const newContactReference: DocumentReference = doc(firestore, `users/${payload.uid}/contacts/${contact.room_hash}`);
 
+            (await setDoc(newContactReference, contact))
+        },
+        async addContactListListenter({ dispatch }, callback: (snapshot: QuerySnapshot<DocumentData>) => any): Promise<Unsubscribe> {
+            const uid = await dispatch('auth/getUid', null, {root: true}),
+                  contactsRef: CollectionReference =
+                                collection(firestore, `users/${uid}/contacts`)
+            const unlisten = onSnapshot(contactsRef, callback)
+            return unlisten
         },
         async handshakeUsers({ dispatch }, payload: {cuid: string, chatRoomHash: string}) {
             const uid = await dispatch('auth/getUid', null, {root: true})
 
-            await dispatch('addNewUserContact', {uid, ...payload})
-            await dispatch('addNewUserContact', {...payload, uid: payload.cuid, cuid: uid})
+            await dispatch('addNewUserContact', { uid, ...payload })
+            await dispatch('addNewUserContact', { ...payload, uid: payload.cuid, cuid: uid })
         }
     }
 }
