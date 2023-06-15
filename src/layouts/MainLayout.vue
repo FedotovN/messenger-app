@@ -8,7 +8,7 @@
             <div class="flex justify-center items-center flex-col gap-4 h-full w-full" v-else>
                 <base-loader size="medium"></base-loader>
                 <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                    C возвращением, {{ username }}! 👋
+                    Добро пожаловать, {{ username }}! 👋
                 </p>
             </div>
         </div>
@@ -38,6 +38,13 @@ export default defineComponent({
         userContacts() {
             return this.$store.getters['contacts/getContacts'].length
         }
+    },
+    async created() {
+        this.contactsLoading = true
+            await this.$store.dispatch('auth/prefetchUserData', (m: Message) => {
+                this.$toast.show(`${m.sended_by_name}: ${m.content}`)
+            })
+        this.contactsLoading = false
     }
 })
 </script>

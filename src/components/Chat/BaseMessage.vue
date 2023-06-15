@@ -11,7 +11,9 @@
                                  'text-gray-700': !isCounterMessage}">{{message.content}}</p>
                     <div class="flex justify-between items-center px-2">
                         <div class="flex gap-2 pr-2 items-center">
-                            <small class="text-gray-500 text-xs">Отправлено</small>
+                            <small class="text-gray-500 text-xs">
+                                {{ messageStatusLabel }}
+                            </small>
                             <div class="h-1 w-1 bg-gray-500 rounded-full"></div>
                             <small class="text-gray-500 text-xs">{{filterDate(message.sended_at)}}</small>
                         </div>
@@ -26,6 +28,7 @@
 
 <script lang="ts">
 import Message from '@/classes/chat/Message';
+import readStatus from '@/enums/ReadStatus';
 import { filterDateFromJSONString } from "@/utils/dateFilter"
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({
@@ -67,6 +70,15 @@ export default defineComponent({
         getStyles(): string {
             const c = this.isCounterMessage
             return this.getBorderStyles + ' ' + `${c ? 'bg-gray-900' : 'bg-blue-300'}`
+        },
+        messageStatusLabel() {
+            const s: readStatus = this.message.readStatus
+            return s === readStatus.SENDING
+                        ? 'Отправка'
+                    : s === readStatus.READ
+                        ? 'Прочитано'
+                    : 'Отправлено'
+                
         }
     },
     data: () => ({})

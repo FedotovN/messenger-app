@@ -8,6 +8,7 @@ import { QuerySnapshot, DocumentData, CollectionReference,
          addDoc, getDocs } from "firebase/firestore";
 
 import { Unsubscribe } from "firebase/auth";
+import readStatus from "@/enums/ReadStatus";
 export default {
     namespaced: true,
     state: () => ({
@@ -16,20 +17,28 @@ export default {
     getters: {
         getRoomInfo: (s) => (hash: string): IRoomInfo => s.rooms[hash],
         getRoomMessages: (s) => (hash: string): Message[] => s.rooms[hash]?.messages,
-        getLastRoomMessage: (s) => (hash: string): Message => s.rooms[hash]?.messages.slice(-1),
+        getLastRoomMessage: (s) => (hash: string): Message => s.rooms[hash]?.messages.slice(-1)[0],
+        getUnreadMessagesAmount: (s) => (hash: string): number | undefined => {
+            return s.rooms[hash]?.messages.filter(m => m.readStatus != readStatus.READ).length
+        },
         getAllRooms: (s): IRoomInfo[] => s.rooms 
     },
     mutations: {
         pushMessageByHash: (state, payload: {hash: string, message: Message}) => {
-            let room: IRoomInfo = state.rooms[payload.hash]
-            if(!room) {
-                state.rooms[payload.hash] = {hash: payload.hash, messages: [payload.message]}
-                room = state.rooms[payload.hash]
+            if(!payload.hash) {
+                console.warn('Didn\'t get room hash at pushMessageByHash commit of room.ts')
+                return
             }
-            room?.messages.push(payload.message)
+            const room: IRoomInfo = state.rooms[ payload.hash ]
+            if(!room) {
+                state.rooms[payload.hash] = { hash: payload.hash, messages: [payload.message] }
+            }
+            else {
+                state.rooms[payload.hash].messages.push(payload.message)  
+            }
         },
         setRoomInfo: (state, info: IRoomInfo) => state.rooms[info.hash] = info,
-        setAllRooms: (state, infos: IRoomInfo[]) => infos.forEach(i => state[i.hash] = i)
+        setAllRooms: (state, infos: IRoomInfo[]) => infos.forEach(i => state.rooms[i.hash] = i)
     },
     actions: {
         // Realtime messages listener setup
@@ -48,15 +57,14 @@ export default {
             
             return chatRoomHash
         },
-        async sendMessageToUser({ dispatch, rootGetters }, payload: {message: Message, counterId: string}): Promise<void> {
+        async sendMessageToUser({ dispatch, rootGetters, commit }, payload: {message: Message, counterId: string}): Promise<void> {
             const uid: string = await dispatch('auth/getUid', null, {root: true}),
                   cuid = payload.counterId
 
             let room_id: string | undefined = rootGetters['contacts/findContact'](payload.counterId)
             if(!room_id) room_id = await dispatch('openNewRoom', {uid, cuid})
-            console.log(room_id)
             const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_id}/messages`)
-            console.log(payload.message)
+
             await addDoc(chatRoomRef, {...payload.message})
         },
         // Prefetching data
@@ -70,7 +78,6 @@ export default {
             return messages
         },
         async getAllMRoomInfosByRoomHashes({ commit, dispatch }, room_hashes: string[]) {
-            console.time('messages prefetch')
             const resulted: IRoomInfo[] = [];
             for(let i = 0; i < room_hashes.length; i++) {
                 const hash = room_hashes[i],

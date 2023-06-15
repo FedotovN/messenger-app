@@ -14,7 +14,10 @@ export default {
     }),
     mutations: {
         setContacts: (s, p) => s.contacts = p,
-        appendContact: (s, p) => s.contacts.push(p),
+        appendContact: (s, p) => { 
+            if(s.contacts.find(c => c.uid === p.uid)) return
+            s.contacts.push(p) 
+        },
         setContact: (s, {uid, contact}) => s.map(c => { if(c.uid === uid){
             return contact
         } else return c})
@@ -47,17 +50,18 @@ export default {
             const {email, name, photoURL, bio, uid} = userInfo as Contact
             return {email, name, photoURL, bio, room_hash: contact.room_hash, uid} as Contact
         },
-        async fetchCurrentUserContacts({ dispatch, commit }): Promise<void> {
+        async fetchCurrentUserContacts({ dispatch, commit }): Promise<Contact[]> {
             const uid: string = await dispatch('auth/getUid', null, {root: true}),
                   contactsRef: CollectionReference = collection(firestore, `users/${uid}/contacts`)
             let contactUIDs = ((await getDocs(contactsRef)).docs.map(c => ({...c.data()}) as contactKey))
-            if(!contactUIDs) return
+            if(!contactUIDs) return []
             
             const result: Contact[] = [];
             for(let i = 0; i < contactUIDs.length; i++) {
                 result.push(await dispatch('fetchContactInfo', contactUIDs[i]))
             }
             commit('setContacts', result)
+            return result
         },
         async addNewUserContact({ dispatch, commit, rootGetters }, payload: {uid: string, cuid: string, chatRoomHash: string}): Promise<void> {
 

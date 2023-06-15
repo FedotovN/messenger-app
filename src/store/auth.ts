@@ -8,19 +8,57 @@ import { signInWithEmailAndPassword,
          updateProfile, GoogleAuthProvider
        } from 'firebase/auth'
 import { uploadBytes, ref, getDownloadURL, StorageReference } from "firebase/storage"
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { QuerySnapshot, DocumentData, doc, getDoc, setDoc } from 'firebase/firestore'
+import Contact from '@/classes/chat/Contact'
+import Message from '@/classes/chat/Message'
+import readStatus from '@/enums/ReadStatus'
 export default {
     namespaced: true,
     state: () => ({
-        user: null
+        user: null,
+        prefetched: false
     }),
     mutations: {
-        setUser: (s, p) => s.user = p
+        setUser: (s, p) => s.user = p,
+        changePrefetchedStatus: (s, p) => s.prefetched = p
     },
     getters: {
         getUser(s) { return s.user}
     },
     actions: {
+        async prefetchUserData({ state, dispatch, commit }, newMessageCallback?: (message: Message) => void) {
+            await dispatch('contacts/fetchCurrentUserContacts', null, {root: true})
+
+            async function setMessagesListener(hash: string) {
+                await dispatch('room/setChatListenerByRoomHash', {
+                    hash, 
+                    callback: (snapshot: QuerySnapshot<DocumentData>) => {
+                        const newMessages = snapshot.docChanges()
+                                            .filter(change => change.type === 'added')
+                                            .map(change => change.doc.data())
+                        newMessages.forEach(message => {
+                            const m: Message = message as Message
+                            m.readStatus = readStatus.SENDED
+                            commit('room/pushMessageByHash', 
+                            {
+                                hash, 
+                                message: m
+                            }, {root: true})
+                        })
+                    }
+                }, {root: true})
+            }
+            await dispatch('contacts/addContactListListenter', (snapshot: QuerySnapshot<DocumentData>) => {
+                const newContacts = snapshot.docChanges().map(change => change.doc.data())
+                newContacts.forEach(async (c: DocumentData) => {
+                    await setMessagesListener(c.room_hash)
+
+                    const fetched: Contact = await dispatch('contacts/fetchContactInfo', c, {root: true})
+
+                    commit('contacts/appendContact', fetched, {root: true})
+                })
+            }, {root: true})
+        },
         async linkWithDb(_, newProfile) {
             let res = {}
             try {
@@ -37,8 +75,8 @@ export default {
                 console.warn('Error in linkWithDb method of auth store module')
                 throw(e)
             }
-        },
-        checkAuth({ commit }) {
+    },
+        async checkAuth({ commit, dispatch }) {
             commit('setUser', auth.currentUser ? auth.currentUser : null)
         },
         async signInWithGoogle({ commit }){

@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:h-[calc(100vh_-_8rem)] h-[calc(100vh_-_10.25rem)] relative">
+  <div class="sm:h-[calc(100vh_-_8rem)] h-[calc(100vh_-_10.5rem)] relative">
     <div class="absolute top-2 left-1/2 -translate-x-1/2 z-50">
         <transition name="fade">
             <base-date-badge :date="new Date()" v-if="this.showBadge" />

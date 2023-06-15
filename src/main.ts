@@ -23,6 +23,6 @@ function initApp() {
     for(const name in UI) { app.component(name, UI[name]) }
     for(const name in directives) {app.directive(name, directives[name])}
     app.use(i18n).use(store).use(router).use(Toaster, {
-        position: "top-right"
+        position: "top-right", 
     }).use(tooltip).mount('#app')
 }

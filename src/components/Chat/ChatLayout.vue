@@ -27,7 +27,7 @@
       </div>
     </header>
     <main class="flex-1">
-      <messages-list :messages="getMessages" :uid="getUser.uid" v-if="getMessages?.length"/>
+      <messages-list :messages="messages" :uid="getUser.uid" v-if="getMessages?.length"/>
       <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%_-_1rem)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
           <base-loader size="big" />
       </div>
@@ -40,6 +40,7 @@
   </div>
 </template>
 <script lang="ts">
+import _ from "lodash"
 import { mapGetters, mapMutations } from "vuex"
 import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
@@ -53,6 +54,7 @@ export default defineComponent({
       data: () => ({
       contactInfo: null as unknown as Contact,
       messagesContainer: null as unknown as HTMLDivElement,
+      messages: [] as Message[],
       loading: false as boolean,
       showProfile: false as boolean,
       newMessageText: '',
@@ -70,9 +72,10 @@ export default defineComponent({
       },
       async sendMessage(text): Promise<void> {
         if(!text) return
-        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDED, false)
+        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDING, false)
+        
+        this.messages.push(message)
 
-        this.$store.commit('room/pushMessageByHash', {hash: this.contactInfo.room_hash, message})
         await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})
       },
       async getContactInfo(): Promise<Contact> {
@@ -94,7 +97,7 @@ export default defineComponent({
           this.loading = true
 
           this.contactInfo = await this.getContactInfo()  
-          
+          this.messages = _.cloneDeep(this.getMessages)
 
           this.loading = false
           if(!this.contactInfo && this.$route.name === 'chat'){
@@ -104,10 +107,15 @@ export default defineComponent({
           }
         },
         immediate: true
+      },
+      getMessages: {
+        handler(v) {
+          this.messages = _.cloneDeep(v)
+        },  
+        deep: true
       }
     },
     computed: {
-      ...mapMutations('room', {'pushMessage': 'pushMessageByHash'}),
       ...mapGetters('auth', ['getUser']),
       ...mapGetters('contacts', ['getContacts']),
       ...mapGetters('room', ['getRoomInfo']),
@@ -115,7 +123,7 @@ export default defineComponent({
           return this.getContacts?.find(c => c.uid === this.$route.params.chatId)?.room_hash
       },
       getMessages() {
-        return this.getRoomInfo(this.getRoomHash)?.messages
+        return this.getRoomInfo(this.getRoomHash)?.messages || []
       }
     }
 })

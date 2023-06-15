@@ -28,7 +28,7 @@
         return this.$route.meta.transition + '-transition'
       }
     },
-    async mounted() {
+    async created() {
       this.$store.dispatch('auth/checkAuth')
       const config = await this.$store.dispatch('getConfig')
       this.$store.dispatch('applyConfig', config)

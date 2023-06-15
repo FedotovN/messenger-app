@@ -8,11 +8,18 @@
             </div>
             <div class="flex flex-col overflow-hidden w-full">
                 <div class="w-full flex overflow-hidden justify-between items-center">
-                    <p class="flex-1 text-sm font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-300 text-gray-700">{{contact.name}}</p> 
-                    <!-- <div class="flex items-center justify-center text-xs h-[1rem] min-w-[1rem] p-1 rounded-full bg-green-300 text-gray-700 font-bold">1</div> -->
+                    <div class="flex flex-col overflow-hidden">
+                        <p class="flex-1 text-sm font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-300 text-gray-700">{{contact.name}}</p> 
+                        <div class="flex w-full gap-1 overflow-hidden text-sm whitespace-nowrap" v-if="lastMessage">
+                            <small class="overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold">
+                                <span class="dark:text-gray-300 text-gray-700">{{ lastMessage.sended_by_name }}</span>: {{ lastMessage.content }}
+                            </small>
+                        </div>         
+                    </div>
+                    <div class="flex items-center justify-center text-xs h-[1rem] min-w-[1rem] p-1 rounded-full bg-green-300 text-gray-700 font-bold" v-if="unreadMessages">{{ unreadMessages }}</div>
                 </div>  
             </div>
-        </div>  
+        </div> 
     </div>
 </template>
 
@@ -21,9 +28,10 @@ import { mapActions } from "vuex";
 import {defineComponent, PropType} from "vue"
 import Contact from "@/classes/chat/Contact";
 import { Unsubscribe } from "firebase/auth";
+import Message from "@/classes/chat/Message";
 export default defineComponent({
     name: 'ContactItem',
-    data: () => ({ roomListener: null as unknown as Unsubscribe }),
+    data: () => ({ firstUpload: true }),
     props: {
         contact: {
             type: Object as PropType<Contact>,
@@ -39,6 +47,21 @@ export default defineComponent({
     computed: {
         uid() {
             return this.$store.getters['auth/getUser']?.uid
+        },
+        lastMessage(): Message {
+            /*eslint-disable*/
+            const message: Message = this.$store.getters['room/getLastRoomMessage'](this.contact.room_hash)
+            return message
+        },
+        unreadMessages() {
+            return this.$store.getters['room/getUnreadMessagesAmount'](this.contact.room_hash)
+        }
+    },
+    watch: {
+        lastMessage(v) {
+            if(!this.firstUpload && v.sended_by_uid != this.uid) {
+                this.$toast.show(`${v.sended_by_name}: ${v.content}`)
+            } else this.firstUpload = false
         }
     }
 })
