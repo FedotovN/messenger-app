@@ -7,6 +7,7 @@
 </template>
 <script>
 import tippy from 'tippy.js';
+import { followCursor } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css'
 
@@ -25,9 +26,10 @@ export default {
             content: this.$refs.slot
         }
         this.t = tippy(this.$el.parentNode, {
+            appendTo: document.body,
             ...defaults,
             ...this.options,
-            appendTo: document.body
+            plugins: [followCursor]
         })
     },
     unmounted() {

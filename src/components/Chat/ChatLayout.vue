@@ -72,7 +72,7 @@ export default defineComponent({
       },
       async sendMessage(text): Promise<void> {
         if(!text) return
-        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDING, false)
+        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text)
         
         this.messages.push(message)
 

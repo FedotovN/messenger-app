@@ -38,7 +38,6 @@ export default {
                                             .map(change => change.doc.data())
                         newMessages.forEach(message => {
                             const m: Message = message as Message
-                            m.readStatus = readStatus.SENDED
                             commit('room/pushMessageByHash', 
                             {
                                 hash, 

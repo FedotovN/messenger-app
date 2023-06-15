@@ -5,6 +5,11 @@
 .card {
     @apply flex justify-center items-center transition-colors shadow rounded bg-white text-gray-600 border border-gray-300 sm:border-none dark:border-gray-600 dark:text-gray-100 dark:bg-dark-200 cursor-pointer
 }
+@keyframes dissapear {
+    100% {
+        opacity: 0;
+    }
+}
 .message-first {
     border-bottom-right-radius: .4rem;
 }

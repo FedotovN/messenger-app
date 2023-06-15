@@ -1,35 +1,41 @@
 <template>
-    <div class="w-full h-auto flex" :class="{'justify-end': !isCounterMessage}">
+    <div class="w-full h-auto gap-2 items-center flex group" :class="{'justify-end flex-row': !isCounterMessage}">
+        <small class="text-gray-500 dark:text-gray-300 text-xs will-dissapear group-hover:opacity-100 opacity-0 transition-all" v-show="!isCounterMessage">{{filterDate(message.sended_at)}}</small>
         <div
-            class="cursor-pointer rounded-3xl max-w-[calc(100%_-_2rem)] min-h-[1.5rem] h-auto min-w-[4rem] shadow-md inline-flex transition-all p-3"
+            class="cursor-pointer rounded-3xl max-w-[calc(100%_-_2rem)] min-h-[1.5rem] h-auto min-w-[4rem] shadow-md inline-flex transition-all px-3 py-2 overflow-hidden"
             :class="getStyles">
-            <div class="flex gap-2 items-center h-full self-end">
-                <div class="flex flex-col gap-1">
+            <base-tooltip :options="{ allowHTML: true, trigger: 'click', followCursor: true }">
+                <div class="flex flex-col w-32 gap-2">
+                    <div class="flex justify-between items-center h-6 w-full rounded-md">
+                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
+                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
+                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
+                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
+                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
+                    </div>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Удалить</p>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Редактировать</p>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Переслать</p>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Сохранить</p>
+                </div>
+            </base-tooltip>
+            <div class="flex gap-2 items-center h-full self-end overflow-hidden">
+                <div class="flex flex-col overflow-hidden">
                     <p
-                        class="text-sm text-ellipsis px-2 -mt-1"
+                        class="text-sm text-ellipsis px-2 overflow-hidden"
                         :class="{'text-gray-300': isCounterMessage, 
                                  'text-gray-700': !isCounterMessage}">{{message.content}}</p>
-                    <div class="flex justify-between items-center px-2">
-                        <div class="flex gap-2 pr-2 items-center">
-                            <small class="text-gray-500 text-xs">
-                                {{ messageStatusLabel }}
-                            </small>
-                            <div class="h-1 w-1 bg-gray-500 rounded-full"></div>
-                            <small class="text-gray-500 text-xs">{{filterDate(message.sended_at)}}</small>
-                        </div>
-                        <div class="h-1 w-1 bg-gray-500 rounded-full mr-2"></div>
-                        <div class="text-gray-600 text-xs">Изменено</div>
-                    </div>
                 </div>
             </div>
         </div>
+        <small class="text-gray-500 dark:text-gray-300 text-xs will-dissapear group-hover:opacity-100 opacity-0 transition-all" v-show="isCounterMessage">{{filterDate(message.sended_at)}}</small>
     </div>
 </template>
 
 <script lang="ts">
 import Message from '@/classes/chat/Message';
-import readStatus from '@/enums/ReadStatus';
 import { filterDateFromJSONString } from "@/utils/dateFilter"
+import { followCursor } from 'tippy.js';
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({
     name: 'BaseMessage',
@@ -70,21 +76,7 @@ export default defineComponent({
         getStyles(): string {
             const c = this.isCounterMessage
             return this.getBorderStyles + ' ' + `${c ? 'bg-gray-900' : 'bg-blue-300'}`
-        },
-        messageStatusLabel() {
-            const s: readStatus = this.message.readStatus
-            return s === readStatus.SENDING
-                        ? 'Отправка'
-                    : s === readStatus.READ
-                        ? 'Прочитано'
-                    : 'Отправлено'
-                
         }
-    },
-    data: () => ({})
+    }
 })
 </script>
-
-<style>
-
-</style>

@@ -6,12 +6,14 @@
         </transition>
     </div>
     <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full relative" ref="messages_container" v-on-scroll="{callback: showDateBadge}">
-        <base-message
-        :isCounterMessage="isCounterMessage(message.sended_by_uid)"
-        v-for="(message, ind) in messages"
-        :message="message"
-        :key="getMessageKey(message.sended_at)"
-        :placementOrder="getMessagePlacementOrder(ind)"></base-message>
+        <transition-group name="messages">
+            <base-message
+            :isCounterMessage="isCounterMessage(message.sended_by_uid)"
+            v-for="(message, ind) in messages"
+            :message="message"
+            :key="getMessageKey(message.sended_at)"
+            :placementOrder="getMessagePlacementOrder(ind)"></base-message>
+        </transition-group>
     </div>
 </div>
 </template>
@@ -97,5 +99,12 @@ export default defineComponent({
     }
     .fade-enter-from {
         opacity: 0;
+    }
+    .messages-enter-active, .messages-leave-active {
+        transition: opacity .4s;
+    }
+    .messages-enter-from {
+        opacity: 0;        
+        bottom: 0;
     }
 </style>
