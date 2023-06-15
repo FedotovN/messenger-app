@@ -16,22 +16,20 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { mapActions, mapMutations } from 'vuex';
 import AppSidebar from '@/components/App/AppSidebar.vue';
 import AppNavbar from '@/components/App/AppNavbar.vue';
-export default {
+import Message from '@/classes/chat/Message';
+import { QuerySnapshot, DocumentData } from '@firebase/firestore';
+import { defineComponent } from 'vue';
+export default defineComponent({
     name: 'MainLayout',
     data: () => ({
         contactsLoading: false
     }),
     components: {
         AppSidebar, AppNavbar
-    },
-    async created() {
-        this.contactsLoading = true
-        if(!this.userContacts)
-            await this.$store.dispatch('contacts/fetchCurrentUserContacts')
-        this.contactsLoading = false
     },
     computed: {
         username() {
@@ -40,8 +38,8 @@ export default {
         userContacts() {
             return this.$store.getters['contacts/getContacts'].length
         }
-    },
-}
+    }
+})
 </script>
 
 <style>

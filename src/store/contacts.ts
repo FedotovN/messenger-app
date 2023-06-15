@@ -21,7 +21,9 @@ export default {
     },
     getters: {
         getContacts: s => s.contacts,
-
+        findContact: (s) => uid => { 
+            return s.contacts.find(contact => contact.uid === uid)?.room_hash 
+        }
     },
     actions: {
         async fetchUsersByName({dispatch}: any, { name }: {name: string}): Promise<Object[]> {
@@ -39,7 +41,7 @@ export default {
             userInfo = (await getDoc(userRef)).data()
             return userInfo as Contact
         },
-        async fetchContactByUid({dispatch}, contact): Promise<Contact | undefined>{
+        async fetchContactInfo({dispatch}, contact): Promise<Contact | undefined>{
             const userInfo = (await dispatch('getUserInfoByUid', contact.uid))
             if(!userInfo) return
             const {email, name, photoURL, bio, uid} = userInfo as Contact
@@ -53,7 +55,7 @@ export default {
             
             const result: Contact[] = [];
             for(let i = 0; i < contactUIDs.length; i++) {
-                result.push(await dispatch('fetchContactByUid', contactUIDs[i]))
+                result.push(await dispatch('fetchContactInfo', contactUIDs[i]))
             }
             commit('setContacts', result)
         },

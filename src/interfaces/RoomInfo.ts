@@ -1,7 +1,6 @@
 import Message from "@/classes/chat/Message"
 
-export default interface IChatInfo {
+export default interface IRoomInfo {
     messages: Message[],
     hash: string,
-    last_message?: Message
 }

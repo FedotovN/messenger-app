@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import auth from "./auth"
 import contacts from "./contacts"
-import chat from './chat'
+import room from './room'
 export default createStore({
   state: {
   },
@@ -33,6 +33,6 @@ export default createStore({
     }
   },
   modules: {
-    auth, contacts, chat
+    auth, contacts, room
   }
 })

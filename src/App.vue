@@ -11,8 +11,8 @@
   </div>
 </template>
 <script>
-  import layouts from '@/layouts'
-  import transitions from '@/transitions'
+  import layouts from '@/layouts/index'
+  import transitions from '@/transitions/index'
   export default {
     name: 'App',
     components: {

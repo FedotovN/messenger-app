@@ -1,0 +1,86 @@
+import IRoomInfo from "@/interfaces/RoomInfo";
+import Message from "@/classes/chat/Message";
+import cyrb53 from "@/utils/hashGenerator";
+import { firestore } from "@/firebase/config";
+
+import { QuerySnapshot, DocumentData, CollectionReference,
+         collection, query, orderBy, onSnapshot,
+         addDoc, getDocs } from "firebase/firestore";
+
+import { Unsubscribe } from "firebase/auth";
+export default {
+    namespaced: true,
+    state: () => ({
+        rooms: {}
+    }),
+    getters: {
+        getRoomInfo: (s) => (hash: string): IRoomInfo => s.rooms[hash],
+        getRoomMessages: (s) => (hash: string): Message[] => s.rooms[hash]?.messages,
+        getLastRoomMessage: (s) => (hash: string): Message => s.rooms[hash]?.messages.slice(-1),
+        getAllRooms: (s): IRoomInfo[] => s.rooms 
+    },
+    mutations: {
+        pushMessageByHash: (state, payload: {hash: string, message: Message}) => {
+            let room: IRoomInfo = state.rooms[payload.hash]
+            if(!room) {
+                state.rooms[payload.hash] = {hash: payload.hash, messages: [payload.message]}
+                room = state.rooms[payload.hash]
+            }
+            room?.messages.push(payload.message)
+        },
+        setRoomInfo: (state, info: IRoomInfo) => state.rooms[info.hash] = info,
+        setAllRooms: (state, infos: IRoomInfo[]) => infos.forEach(i => state[i.hash] = i)
+    },
+    actions: {
+        // Realtime messages listener setup
+        setChatListenerByRoomHash(_, 
+            payload: {hash, callback: (snapshot: QuerySnapshot<DocumentData>) => void}): 
+            Unsubscribe {
+            const chatRef: CollectionReference =
+                                collection(firestore, `chats/${payload.hash}/messages`),
+                  q = query(chatRef, orderBy('created_at'))
+            const unlisten = onSnapshot(q, payload.callback)
+            return unlisten
+        },
+        async openNewRoom({ dispatch }, payload: {uid: string, cuid: string}): Promise<string> {
+            const chatRoomHash: string = cyrb53(payload.uid + payload.cuid)
+            await dispatch('contacts/handshakeUsers', {cuid: payload.cuid, chatRoomHash}, {root: true})
+            
+            return chatRoomHash
+        },
+        async sendMessageToUser({ dispatch, rootGetters }, payload: {message: Message, counterId: string}): Promise<void> {
+            const uid: string = await dispatch('auth/getUid', null, {root: true}),
+                  cuid = payload.counterId
+
+            let room_id: string | undefined = rootGetters['contacts/findContact'](payload.counterId)
+            if(!room_id) room_id = await dispatch('openNewRoom', {uid, cuid})
+            console.log(room_id)
+            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_id}/messages`)
+            console.log(payload.message)
+            await addDoc(chatRoomRef, {...payload.message})
+        },
+        // Prefetching data
+        async getRoomInfoByRoomHash({ commit }, room_hash): Promise<Message[]> {
+            if(!room_hash) return []
+            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_hash}/messages`),
+                q = query(chatRoomRef, orderBy('created_at'))
+            const messages = (await getDocs(q)).docs.map(d => d.data()) as Message[]
+            const room_info: IRoomInfo = { hash: room_hash, messages }
+            commit('setRoomInfo', room_info)
+            return messages
+        },
+        async getAllMRoomInfosByRoomHashes({ commit, dispatch }, room_hashes: string[]) {
+            console.time('messages prefetch')
+            const resulted: IRoomInfo[] = [];
+            for(let i = 0; i < room_hashes.length; i++) {
+                const hash = room_hashes[i],
+                    info: IRoomInfo = {
+                    hash,
+                    messages: await dispatch('getRoomInfoByRoomHash', hash)
+                }
+                resulted.push(info)
+            }
+            commit('setAllRooms', resulted)
+        },
+    }
+}

@@ -27,7 +27,7 @@
       </div>
     </header>
     <main class="flex-1">
-      <messages-list :messages="messages" :uid="getUser.uid" v-if="messages?.length"/>
+      <messages-list :messages="getMessages" :uid="getUser.uid" v-if="getMessages?.length"/>
       <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%_-_1rem)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
           <base-loader size="big" />
       </div>
@@ -40,11 +40,10 @@
   </div>
 </template>
 <script lang="ts">
-import { mapGetters } from "vuex"
+import { mapGetters, mapMutations } from "vuex"
 import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
-import IChatInfo from "@/interfaces/ChatInfo"
 import BaseChatInput from "./BaseChatInput.vue"
 import MessagesList from "./MessagesList.vue"
 import { defineComponent } from "vue"
@@ -57,8 +56,6 @@ export default defineComponent({
       loading: false as boolean,
       showProfile: false as boolean,
       newMessageText: '',
-      chatInfo: {} as IChatInfo,
-      messages: [] as Message[]
     }),
     methods: {
       close() {
@@ -75,9 +72,8 @@ export default defineComponent({
         if(!text) return
         const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDED, false)
 
-        this.messages.push(message)
-        await this.$store.dispatch('chat/sendMessageToUser', {message, counterId: this.contactInfo.uid})
-        this.messages = await this.$store.dispatch('chat/getMessagesListByRoomHash', this.getRoomHash)
+        this.$store.commit('room/pushMessageByHash', {hash: this.contactInfo.room_hash, message})
+        await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})
       },
       async getContactInfo(): Promise<Contact> {
         const counterUid = this.$route.params.chatId
@@ -89,14 +85,6 @@ export default defineComponent({
           contact = await this.$store.dispatch('contacts/getUserInfoByUid', this.$route.params.chatId)
         }
         return contact
-      },
-      async getChatInfo() {
-        this.chatInfo = this.$store.getters['chat/getRoomInfoByHash'](this.getRoomHash)
-        if(!this.chatInfo?.messages) {
-          await this.$store.dispatch('chat/getRoomInfoByHash', this.getRoomHash)
-          this.chatInfo = this.getRoomInfoByHash(this.getRoomHash)
-        }
-        this.messages = this.chatInfo?.messages || []
       }
     },
     watch: {
@@ -106,7 +94,7 @@ export default defineComponent({
           this.loading = true
 
           this.contactInfo = await this.getContactInfo()  
-          this.getChatInfo()
+          
 
           this.loading = false
           if(!this.contactInfo && this.$route.name === 'chat'){
@@ -119,12 +107,16 @@ export default defineComponent({
       }
     },
     computed: {
+      ...mapMutations('room', {'pushMessage': 'pushMessageByHash'}),
       ...mapGetters('auth', ['getUser']),
       ...mapGetters('contacts', ['getContacts']),
-      ...mapGetters('chat', ['getRoomInfoByHash']),
+      ...mapGetters('room', ['getRoomInfo']),
       getRoomHash() {
           return this.getContacts?.find(c => c.uid === this.$route.params.chatId)?.room_hash
       },
+      getMessages() {
+        return this.getRoomInfo(this.getRoomHash)?.messages
+      }
     }
 })
 </script>
