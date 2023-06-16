@@ -12,7 +12,8 @@ const routes = [
         path: ':chatId',
         name: 'chat',
         component: () => import('@/components/Chat/ChatLayout.vue'),
-        props: (route) => ({chatId: route.params.chatId})
+        props: (route) => ({chatId: route.params.chatId}),
+        meta: {title: 'chat'}
       }
     ]
   },

@@ -1,9 +1,9 @@
 <template>
-  <div class="flex gap-5 items-center overflow-hidden cursor-pointer" v-if="user">
+  <div class="flex gap-5 items-center overflow-hidden" v-if="user" :class="{'cursor-pointer': showConfiguration}">
     <div class="rounded-full min-w-[2.5rem] w-10 h-10 bg-gray-300 overflow-hidden">
         <img :src="user.photoURL" :alt="user.name" class="object-cover h-full w-full" v-if="user.photoURL">
     </div>
-    <base-tooltip :options="{trigger: 'click', arrow: false, theme: 'white'}">
+    <base-tooltip :options="{trigger: 'click', arrow: false, theme: 'white'}" v-if="showConfiguration">
         <div class="w-[150px] text-center flex flex-col text-white gap-4">
             <p class="cursor-pointer hover:text-gray-400 transition-colors" @click="edit">Профиль</p>
             <p class="cursor-pointer hover:text-gray-400 transition-colors" @click="settings">Настройки</p>
@@ -27,6 +27,11 @@ export default defineComponent({
         fallbackName: {
             type: String,
             required: false
+        },
+        showConfiguration: {
+            type: Boolean,
+            required: false,
+            default: true
         }
     },
     methods: {

@@ -80,7 +80,9 @@
         "timer": "Таймер",
         "drawingBoard": "Доска для рисования",
         "dashboard": "Главная",
-        "profile": "Профиль"
+        "profile": "Профиль",
+        "main": "Список чатов",
+        "chat": "Чат"
     },
     "phrases": {
         "or": "или",

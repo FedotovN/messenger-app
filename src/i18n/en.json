@@ -99,7 +99,9 @@
         "timer": "Timer",
         "drawingBoard": "Board",
         "dashboard": "Dashboard",
-        "profile": "Profile"
+        "profile": "Profile",
+        "main": "Chat list",
+        "chat": "Chat"
     },
     "operations": {
         "users": {
