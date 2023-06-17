@@ -5,8 +5,7 @@
 
 
 ## Demo
-
-GIF will be here
+![2023-06-17 13-18-14 (1)](https://github.com/FedotovN/messenger-app/assets/53238017/9b852f64-731e-4a7e-a0a6-e7df809d1a31)
 
 
 ## Tech Stack
