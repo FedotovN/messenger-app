@@ -1,24 +1,30 @@
-# messenger-app
 
-## Project setup
-```
-npm install
-```
+# Messager application
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Under development
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Demo
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+GIF will be here
+
+
+## Tech Stack
+
+**Client:** Vue.js 3, Typescript and Tailwind CSS
+
+**Server:** Firebase Authentication, Storage, Firestore
+
+**Other:** lodash, moment, i18n, tippy, e.t.c
+
+
+## Features
+
+- Light/dark mode toggle and adaptive design using Tailwind CSS
+- Group chats
+- Internalization with i18n library (Ru-En)
+
+## Related
+
+- [Password generator](https://github.com/FedotovN/passwordGenerator)
+- [Typewriter](https://github.com/FedotovN/typewriter)
