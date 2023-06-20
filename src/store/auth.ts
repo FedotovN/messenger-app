@@ -8,7 +8,7 @@ import { signInWithEmailAndPassword,
          updateProfile, GoogleAuthProvider
        } from 'firebase/auth'
 import { uploadBytes, ref, getDownloadURL, StorageReference } from "firebase/storage"
-import { QuerySnapshot, DocumentData, doc, getDoc, setDoc } from 'firebase/firestore'
+import { QuerySnapshot, DocumentData, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import Contact from '@/classes/chat/Contact'
 import Message from '@/classes/chat/Message'
 import readStatus from '@/enums/ReadStatus'
@@ -30,16 +30,25 @@ export default {
             await dispatch('contacts/fetchCurrentUserContacts', null, {root: true})
         },
         async linkWithDb(_, newProfile) {
+            console.log(newProfile)
             let res = {}
             try {
                 const ref = await doc(firestore, `users/${newProfile.uid}`),
                   data = (await getDoc(ref)).data()
                 if(data) res = { ...data, ...newProfile }
                 else res = { ...newProfile }
-                res = Object.entries(res).filter( i => i[1] ).reduce((acc, item) => {
-                    return acc = {...acc, [item[0]]: item[1]}
-                }, {})
-                await setDoc(ref, res)
+
+                console.log(res)
+
+                res = Object.entries(res)
+                    .filter( i => !!i[1] )
+                    .reduce((acc, item) => {
+                        return acc = {...acc, [item[0]]: item[1]}
+                    }, {})
+
+                console.log(res)
+                if(data) await updateDoc(ref, res)
+                else await setDoc(ref, res)
             }
             catch(e) {
                 console.warn('Error in linkWithDb method of auth store module')
@@ -183,11 +192,14 @@ export default {
                     await uploadBytes(storageReference, profile_photo_file)
                 }      
                 const photoURL = storageReference! ? await getDownloadURL(storageReference) : null 
+
                 await updateProfile(auth.currentUser!, {
                     displayName: name,
                     photoURL
                 })
-                await dispatch('linkWithDb', {uid, name, email, password, bio, photoURL})
+                
+                console.log({uid, name, email, password, bio, photoURL })
+                await dispatch('linkWithDb', {uid, name, email, password, bio, photoURL })
             }
             catch(e) {
                 console.warn('Error in updateProfile method in auth store module')
