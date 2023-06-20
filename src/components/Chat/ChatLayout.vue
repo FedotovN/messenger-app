@@ -93,6 +93,7 @@ export default defineComponent({
     watch: {
       "$route.params.chatId": {
         async handler(v) {
+          this.messages = []
           if(!this.$route.params.chatId) return
           this.loading = true
 
