@@ -41,7 +41,6 @@ export default {
         setAllRooms: (state, infos: IRoomInfo[]) => infos.forEach(i => state.rooms[i.hash] = i)
     },
     actions: {
-        // Realtime messages listener setup
         setChatListenerByRoomHash(_, 
             payload: {hash, callback: (snapshot: QuerySnapshot<DocumentData>) => void}): 
             Unsubscribe {

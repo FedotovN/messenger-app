@@ -23,10 +23,15 @@ import AppNavbar from '@/components/App/AppNavbar.vue';
 import Message from '@/classes/chat/Message';
 import { QuerySnapshot, DocumentData } from '@firebase/firestore';
 import { defineComponent } from 'vue';
+import { Unsubscribe } from 'firebase/auth';
 export default defineComponent({
     name: 'MainLayout',
     data: () => ({
-        contactsLoading: false
+        contactsLoading: false,
+        listener: null as unknown as {
+            contactsListener: Unsubscribe,
+            messagesListeners: Unsubscribe[]
+        }
     }),
     components: {
         AppSidebar, AppNavbar
@@ -41,10 +46,17 @@ export default defineComponent({
     },
     async created() {
         this.contactsLoading = true
-            await this.$store.dispatch('auth/prefetchUserData', (m: Message) => {
-                this.$toast.show(`${m.sended_by_name}: ${m.content}`)
-            })
+        await this.$store.dispatch('auth/prefetchUserData')
+        this.listener = await this.$store.dispatch('addContactsListener')
+
         this.contactsLoading = false
+    },
+    unmounted() {
+        const l = this.listener
+        l?.contactsListener?.()
+        l?.messagesListeners.forEach(listener => {
+            listener()
+        });
     }
 })
 </script>

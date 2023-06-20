@@ -26,37 +26,8 @@ export default {
         getUser(s) { return s.user}
     },
     actions: {
-        async prefetchUserData({ state, dispatch, commit }, newMessageCallback?: (message: Message) => void) {
+        async prefetchUserData({ dispatch }) {
             await dispatch('contacts/fetchCurrentUserContacts', null, {root: true})
-
-            async function setMessagesListener(hash: string) {
-                await dispatch('room/setChatListenerByRoomHash', {
-                    hash, 
-                    callback: (snapshot: QuerySnapshot<DocumentData>) => {
-                        const newMessages = snapshot.docChanges()
-                                            .filter(change => change.type === 'added')
-                                            .map(change => change.doc.data())
-                        newMessages.forEach(message => {
-                            const m: Message = message as Message
-                            commit('room/pushMessageByHash', 
-                            {
-                                hash, 
-                                message: m
-                            }, {root: true})
-                        })
-                    }
-                }, {root: true})
-            }
-            await dispatch('contacts/addContactListListenter', (snapshot: QuerySnapshot<DocumentData>) => {
-                const newContacts = snapshot.docChanges().map(change => change.doc.data())
-                newContacts.forEach(async (c: DocumentData) => {
-                    await setMessagesListener(c.room_hash)
-
-                    const fetched: Contact = await dispatch('contacts/fetchContactInfo', c, {root: true})
-
-                    commit('contacts/appendContact', fetched, {root: true})
-                })
-            }, {root: true})
         },
         async linkWithDb(_, newProfile) {
             let res = {}
