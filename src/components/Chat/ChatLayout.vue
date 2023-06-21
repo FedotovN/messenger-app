@@ -27,7 +27,7 @@
       </div>
     </header>
     <main class="flex-1">
-      <messages-list :messages="messages" :uid="getUser.uid" v-if="getMessages?.length"/>
+      <messages-list :messages="messages" :uid="getUser.uid" v-if="messages?.length"/>
       <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%_-_1rem)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
           <base-loader size="big" />
       </div>
@@ -41,8 +41,7 @@
 </template>
 <script lang="ts">
 import _ from "lodash"
-import { mapGetters, mapMutations } from "vuex"
-import readStatus from "@/enums/ReadStatus"
+import { mapGetters } from "vuex"
 import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
 import BaseChatInput from "./BaseChatInput.vue"
@@ -94,7 +93,7 @@ export default defineComponent({
       "$route.params.chatId": {
         async handler(v) {
           this.messages = []
-          if(!this.$route.params.chatId) return
+          if(!v) return
           this.loading = true
 
           this.contactInfo = await this.getContactInfo()  

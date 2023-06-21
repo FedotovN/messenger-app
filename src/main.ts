@@ -8,7 +8,6 @@ import UI from '@/components/UI'
 import directives from './directives'
 import Toaster from '@meforma/vue-toaster'
 import tooltip from '@/plugins/tooltip'
-console.log(i18n)
 
 let app: any
 

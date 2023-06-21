@@ -21,11 +21,6 @@ function getDataURL(inputImage: Blob, compress: number, width: number, height: n
                 
                 ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height)
                 const newImageDataUrl = ctx.canvas.toDataURL('image/jpeg', compress)
-                console.log({
-                    dataUrl: newImageDataUrl,
-                    additionalData: newImageDataUrl.split(',')[0],
-                    coded: newImageDataUrl.split(',')[1]
-                })
                 resolve({
                     dataUrl: newImageDataUrl,
                     additionalData: newImageDataUrl.split(',')[0],

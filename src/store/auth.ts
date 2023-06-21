@@ -26,7 +26,6 @@ export default {
             await dispatch('contacts/fetchCurrentUserContacts', null, {root: true})
         },
         async linkWithDb(_, newProfile) {
-            console.log(newProfile)
             let res = {}
             try {
                 const ref = await doc(firestore, `users/${newProfile.uid}`),
@@ -34,15 +33,12 @@ export default {
                 if(data) res = { ...data, ...newProfile }
                 else res = { ...newProfile }
 
-                console.log(res)
-
                 res = Object.entries(res)
                     .filter( i => !!i[1] )
                     .reduce((acc, item) => {
                         return acc = {...acc, [item[0]]: item[1]}
                     }, {})
 
-                console.log(res)
                 if(data) await updateDoc(ref, res)
                 else await setDoc(ref, res)
             }
