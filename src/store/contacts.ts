@@ -24,6 +24,11 @@ export default {
     },
     getters: {
         getContacts: s => s.contacts,
+        getContact: s => name => {
+            return s.contacts.filter(c => {
+                return c.name.toLowerCase().includes(name.toLowerCase())
+            })
+        },
         findContact: (s) => uid => { 
             return s.contacts.find(contact => contact.uid === uid)?.room_hash 
         }

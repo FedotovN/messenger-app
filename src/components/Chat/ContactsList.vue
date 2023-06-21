@@ -60,6 +60,10 @@ export default defineComponent({
             this.users = this.getContacts || []
             return
            }
+
+           this.searchContact(newVal)
+           if(this.users.length) return
+
            this.debouncedQuery =  _.debounce(this.searchUser, 400)
            this.debouncedQuery(newVal)
            this.loading = true
@@ -69,6 +73,9 @@ export default defineComponent({
         ...mapActions('contacts', {
             getUser: 'fetchUsersByName',
         }),
+        searchContact(q: string): void {
+            this.users = this.getContact(q) as Contact []
+        },
         async searchUser(q: string): Promise<void> {
            this.users = await this.getUser({name: q}) as Contact[]
            this.loading = false
@@ -76,7 +83,10 @@ export default defineComponent({
     },
     computed: {
         ...mapGetters('auth', {currUser: 'getUser'}),
-        ...mapGetters('contacts', ['getContacts']),
+        ...mapGetters('contacts', ['getContacts', 'getContact']),
+        contactsNames() {
+            return this.getContacts.map(c => c.name)
+        }
     }
 })
 </script>
