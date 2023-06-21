@@ -34,7 +34,6 @@
 import { mapActions } from "vuex";
 import {defineComponent, PropType} from "vue"
 import Contact from "@/classes/chat/Contact";
-import { Unsubscribe } from "firebase/auth";
 import Message from "@/classes/chat/Message";
 export default defineComponent({
     name: 'ContactItem',
@@ -55,6 +54,9 @@ export default defineComponent({
         uid() {
             return this.$store.getters['auth/getUser']?.uid
         },
+        chatId() {
+            return this.$route.params.chatId
+        },
         lastMessage(): Message {
             /*eslint-disable*/
             const message: Message = this.$store.getters['room/getLastRoomMessage'](this.contact.room_hash)
@@ -66,7 +68,10 @@ export default defineComponent({
     },
     watch: {
         lastMessage(v) {
-            if(!this.firstUpload && v.sended_by_uid != this.uid) {
+            const counter_message: boolean = v.sended_by_uid !== this.uid,
+                  other_chat: boolean = this.chatId !== v.sended_by_uid
+
+            if(counter_message && other_chat && !this.firstUpload) {
                 this.$toast.show(`${v.sended_by_name}: ${v.content}`)
             } else this.firstUpload = false
         }
