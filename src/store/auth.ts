@@ -1,4 +1,3 @@
-/*eslint-disable*/
 import { auth, storage, firestore } from '@/firebase/config'
 import { signInWithEmailAndPassword,
          signInWithPopup,
@@ -8,10 +7,7 @@ import { signInWithEmailAndPassword,
          updateProfile, GoogleAuthProvider
        } from 'firebase/auth'
 import { uploadBytes, ref, getDownloadURL, StorageReference } from "firebase/storage"
-import { QuerySnapshot, DocumentData, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
-import Contact from '@/classes/chat/Contact'
-import Message from '@/classes/chat/Message'
-import readStatus from '@/enums/ReadStatus'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 export default {
     namespaced: true,
     state: () => ({
@@ -58,11 +54,12 @@ export default {
         async checkAuth({ commit, dispatch }) {
             commit('setUser', auth.currentUser ? auth.currentUser : null)
         },
-        async signInWithGoogle({ commit }){
+        async signInWithGoogle({ commit, dispatch }){
             try {
                 const provider = new GoogleAuthProvider()
-                const user = (await signInWithPopup(auth, provider)).user
-                commit('setUser', user)
+                const { displayName, photoURL, uid, email } = (await signInWithPopup(auth, provider)).user
+                await dispatch('linkWithDb', { name: displayName, photoURL, uid, email })
+                commit('setUser', {displayName, photoURL, uid})
             }
             catch(e) {
                 console.warn('Error in signInWithGoogle method of auth store module')
