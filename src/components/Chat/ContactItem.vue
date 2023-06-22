@@ -12,7 +12,7 @@
                         <p class="flex-1 text-sm font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-300 text-gray-700">{{contact.name}}</p> 
                         <div class="flex w-full gap-1 overflow-hidden text-sm whitespace-nowrap" v-if="lastMessage">
                             <small class="overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold">
-                                <span class="dark:text-gray-300 text-gray-700">{{ lastMessage.sended_by_name }}</span>: {{ lastMessage.content }}
+                                <span class="dark:text-gray-300 text-gray-700">{{ lastMessage?.sended_by_name }}</span>: {{ lastMessage?.content }}
                             </small>
                         </div>         
                     </div>
@@ -68,6 +68,7 @@ export default defineComponent({
     },
     watch: {
         lastMessage(v) {
+            if(!v) return
             const counter_message: boolean = v.sended_by_uid !== this.uid,
                   other_chat: boolean = this.chatId !== v.sended_by_uid
 
