@@ -14,7 +14,7 @@
                 @input="updateInput"
                 @focusin="isActive = true"
                 @focusout="isActive = false"
-                class="w-full h-10 text-md outline-none dark:bg-gray-600 bg-gray-100 shadow-none" 
+                class="w-full h-8 text-sm outline-none dark:bg-gray-600 bg-gray-100 shadow-none" 
                 />
             <div class="w-3">
                 <base-loader size="tiny"  v-if="this.loading"/>

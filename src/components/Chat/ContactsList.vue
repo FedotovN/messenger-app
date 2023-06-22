@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-3 h-full bg-gray-200 dark:bg-gray-700 py-4 overflow-hidden w-[300px] ">
+    <div class="flex flex-col gap-[calc(3*0.25rem_-_1px)] h-full bg-gray-200 dark:bg-gray-700 py-3 overflow-hidden w-[300px] ">
         <header class="flex justify-between items-center">
             <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 w-full"/>
         </header>

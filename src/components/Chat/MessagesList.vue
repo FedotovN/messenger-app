@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:h-[calc(100vh_-_8rem)] h-[calc(100vh_-_10.5rem)] relative">
+  <div class="sm:h-[calc(100vh_-_6.5rem)] h-[calc(100vh_-_11.5rem)] relative">
     <base-modal v-model="showConfirmDialog">
         <template #header > Подтверждение операции</template>
         <p class="text-sm text-gray-600 dark:text-gray-400">Вы уверены, что хотите {{ operationName }} ?</p>

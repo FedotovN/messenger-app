@@ -8,12 +8,12 @@
       <p v-else>Решил не рассказывать о себе ничего!</p>
       <p v-if="contactInfo.email">Почта: {{ contactInfo.email }}</p>
     </base-modal>
-    <header class="flex gap-5 items-center min-h-[4.35rem] dark:bg-dark-200 bg-gray-700 shadow pr-2 ">
+    <header class="flex gap-5 items-center h-14 dark:bg-dark-200 bg-gray-700 shadow pr-2 ">
       <div class="flex items-center justify-center h-full w-16 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-100 dark:hover:text-gray-100 transition-colors" @click="close">
         <i class="fa-solid fa-angle-left text-xl"></i>
       </div>
       <div class="flex gap-2 items-center h-full cursor-pointer " @click="openProfile" v-if="!loading">
-        <div class="flex items-center justify-center min-h-[3rem] min-w-[3rem] max-h-[3rem] max-w-[3rem] bg-gray-300 rounded-full overflow-hidden">
+        <div class="flex items-center justify-center min-h-[2.5rem] min-w-[2.5rem] max-h-[2rem] max-w-[2rem] bg-gray-300 rounded-full overflow-hidden">
           <img :src="contactInfo?.photoURL" v-if="contactInfo?.photoURL" alt="" class="h-full w-full object-cover">
         </div>
         <div class="flex-1 overflow-hidden" v-if="contactInfo?.name">
@@ -28,11 +28,11 @@
     </header>
     <main class="flex-1">
       <messages-list :messages="messages" :uid="getUser.uid" v-if="messages?.length"/>
-      <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%_-_1rem)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
+      <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
           <base-loader size="big" />
       </div>
     </main>
-    <footer class="min-h-[4rem] absolute bottom-0 w-full">
+    <footer class="absolute bottom-0 w-full">
       <div class="w-full h-full" v-if="contactInfo">
         <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" class="" />
       </div>
@@ -41,7 +41,6 @@
 </template>
 <script lang="ts">
 import _ from "lodash"
-import cyrb53 from "@/utils/hashGenerator"
 import { mapGetters } from "vuex"
 import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"

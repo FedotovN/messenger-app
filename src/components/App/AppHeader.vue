@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-[calc(0.25rem_*_16)] bg-primary-200 shadow w-full sm:flex hidden">
+  <div class="h-6 bg-primary-200 shadow w-full sm:flex hidden">
     <div class="w-full h-full flex justify-between items-center pr-3 pl-3">
         <div class="w-full flex gap-8 items-center overflow-hidden">
             <div class="flex gap-5 items-center overflow-hidden cursor-pointer" v-if="userInfo">
