@@ -13,7 +13,7 @@
                         <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
                         <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
                     </div>
-                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Удалить</p>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="$emit('delete', message.id)">Удалить</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Редактировать</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Переслать</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Сохранить</p>

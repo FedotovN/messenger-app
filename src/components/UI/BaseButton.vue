@@ -2,7 +2,7 @@
   <div class="w-full">
     <button
     :type="type"
-    class="w-full text-md rounded h-10 transition-colors"
+    class="w-full text-md rounded h-10 transition-colors px-2"
     :class="themes[theme]"
     >
         <slot>Продолжить</slot>

@@ -5,7 +5,7 @@ import { firestore } from "@/firebase/config";
 
 import { QuerySnapshot, DocumentData, CollectionReference,
          collection, query, orderBy, onSnapshot,
-         addDoc, getDocs } from "firebase/firestore";
+         setDoc, getDocs, DocumentReference, doc, deleteDoc } from "firebase/firestore";
 
 import { Unsubscribe } from "firebase/auth";
 import readStatus from "@/enums/ReadStatus";
@@ -37,6 +37,9 @@ export default {
                 state.rooms[payload.hash].messages.push(payload.message)  
             }
         },
+        deleteMessage: (state, payload: {hash: string, id: string}) => {
+            state.rooms[payload.hash].messages = state.rooms[payload.hash].messages.filter(m => m.id !== payload.id)
+        },
         setRoomInfo: (state, info: IRoomInfo) => state.rooms[info.hash] = info,
         setAllRooms: (state, infos: IRoomInfo[]) => { 
             if(Object.keys(infos).length) infos.forEach(i => state.rooms[i.hash] = i) 
@@ -65,9 +68,9 @@ export default {
 
             let room_id: string | undefined = rootGetters['contacts/findContact'](payload.counterId)
             if(!room_id) room_id = await dispatch('openNewRoom', {uid, cuid})
-            const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_id}/messages`)
+            const chatRoomRef: DocumentReference = doc(firestore, `chats/${room_id}/messages/${payload.message.id}`)
 
-            await addDoc(chatRoomRef, {...payload.message})
+            await setDoc(chatRoomRef, {...payload.message})
         },
         async getRoomInfoByRoomHash({ commit }, room_hash): Promise<Message[]> {
             if(!room_hash) return []
@@ -90,5 +93,11 @@ export default {
             }
             commit('setAllRooms', resulted)
         },
+        async deleteMessage({ commit, rootGetters }, payload: {id: string, counterId: string}) {
+            const room_id: string | undefined = rootGetters['contacts/findContact'](payload.counterId)
+            const chatRoomRef: DocumentReference = doc(firestore, `chats/${room_id}/messages/${payload.id}`)
+            commit('deleteMessage', {hash: room_id, id: payload.id})
+            await deleteDoc(chatRoomRef)
+        }
     }
 }

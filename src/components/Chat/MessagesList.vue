@@ -1,5 +1,13 @@
 <template>
   <div class="sm:h-[calc(100vh_-_8rem)] h-[calc(100vh_-_10.5rem)] relative">
+    <base-modal v-model="showConfirmDialog">
+        <template #header > Подтверждение операции</template>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Вы уверены, что хотите {{ operationName }} ?</p>
+        <div class="flex gap-2 pt-2">
+            <base-button class="flex-1" theme="alert" @click="deleteMessage">Удалить</base-button>
+            <base-button class="flex-2" theme="passive" @click="showConfirmDialog = false">Отмена</base-button>
+        </div>
+    </base-modal>
     <div class="absolute top-2 left-1/2 -translate-x-1/2 z-50">
         <transition name="fade">
             <base-date-badge :date="new Date()" v-if="this.showBadge" />
@@ -11,7 +19,9 @@
         v-for="(message, ind) in messages"
         :message="message"
         :key="getMessageKey(message.sended_at)"
-        :placementOrder="getMessagePlacementOrder(ind)"></base-message>
+        :placementOrder="getMessagePlacementOrder(ind)" 
+        @delete="onDeleteMessageClick"
+        />
     </div>
 </div>
 </template>
@@ -32,7 +42,10 @@ export default defineComponent({
         containter: null as unknown as HTMLDivElement,
         loading: false,
         showBadgeTimeout: null,
-        showBadge: false
+        showBadge: false,
+        showConfirmDialog: false,
+        operationName: '',
+        chosenMessageId: ''
     }),
     props: {
         uid: {
@@ -73,6 +86,17 @@ export default defineComponent({
         },
         isCounterMessage(sended_by_uid: string): boolean {
             return sended_by_uid != this.uid
+        },
+        async deleteMessage() {
+            this.showConfirmDialog = true
+            this.$store.dispatch('room/deleteMessage', {id: this.chosenMessageId , counterId: this.$route.params.chatId})
+            this.$toast.show('Сообщение было удалено')
+            this.showConfirmDialog = false
+        },
+        async onDeleteMessageClick(id) {
+            this.showConfirmDialog = true
+            this.operationName = 'удалить сообщение'
+            this.chosenMessageId = id
         }
     },
     watch: {

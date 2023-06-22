@@ -41,6 +41,7 @@
 </template>
 <script lang="ts">
 import _ from "lodash"
+import cyrb53 from "@/utils/hashGenerator"
 import { mapGetters } from "vuex"
 import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
@@ -72,7 +73,8 @@ export default defineComponent({
       },
       async sendMessage(text): Promise<void> {
         if(!text) return
-        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDING)
+        const id = Math.random() + ""
+        const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDING)
         this.messages.push(message)
 
         await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})

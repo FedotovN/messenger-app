@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import ReadStatus from '@/enums/ReadStatus'
 export default class Message {
     constructor(
+        readonly id: string,
         readonly created_at: Timestamp | Date | null,
         public sended_at: Date | string,
         readonly sended_by_uid: string,
