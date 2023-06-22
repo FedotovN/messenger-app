@@ -47,10 +47,10 @@ export default createStore({
       lastMessageCallback?: (Message) => void }): 
     Promise<Unsubscribe> {
       const defaultCallback: (snapshot: QuerySnapshot<DocumentData>) => void = (snapshot: QuerySnapshot<DocumentData>) => {
-          const messages = snapshot.docChanges()
+          const newMessages = snapshot.docChanges()
             .filter(change => change.type === 'added')
             .map(change => change.doc.data())
-          messages.forEach((message) => {
+          newMessages.forEach((message) => {
                 const m: Message = message as Message
                 m.read_status = readStatus.SENDED
                 commit('room/pushMessageByHash', 
@@ -60,8 +60,18 @@ export default createStore({
                 })
                 if(newMessageCallback) newMessageCallback(m)
             })
-
-          if(lastMessageCallback) lastMessageCallback(messages[messages.length - 1])
+          const deletedMessages = snapshot.docChanges()
+                .filter(change => change.type === 'removed')
+                .map(change => change.doc.data())
+          deletedMessages.forEach(message => {
+            const m: Message = message as Message
+            commit('room/deleteMessage', {
+              hash,
+              id: m.id
+            })
+          })
+          
+          if(lastMessageCallback) lastMessageCallback(newMessages[newMessages.length - 1])
       }
       return await dispatch('room/setChatListenerByRoomHash', {
         hash, 
