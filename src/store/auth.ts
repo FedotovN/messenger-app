@@ -104,6 +104,8 @@ export default {
             try  {
                 await auth.signOut()
                 commit('setUser', null)
+                commit('room/setAllRooms', {}, {root: true})
+                commit('contacts/setContacts', [], {root: true})
             }
             catch(e){
                 console.warn('Error in logout method of auth store module')

@@ -20,11 +20,16 @@
                 </div>
             </base-tooltip>
             <div class="flex gap-2 items-center h-full self-end overflow-hidden">
-                <div class="flex flex-col overflow-hidden">
+                <div class="flex gap-2 overflow-hidden items-center">
                     <p
                         class="text-sm text-ellipsis px-2 overflow-hidden"
                         :class="{'text-gray-300': isCounterMessage, 
                                  'text-gray-700': !isCounterMessage}">{{message.content}}</p>
+                     <div v-show="!isCounterMessage" class="flex items-center">
+                        <i class="fa-solid fa-check-double text-gray-700 text-xs" v-if="messageStatus === 'READ'"></i>   
+                        <i class="fa-solid fa-check text-gray-700 text-xs" v-else-if="messageStatus === 'SENDED'"></i>   
+                        <i class="fa-solid fa-hourglass-half text-gray-700 text-xs" v-else-if="messageStatus === 'SENDING'"></i>   
+                     </div>            
                 </div>
             </div>
         </div>
@@ -34,7 +39,9 @@
 
 <script lang="ts">
 import Message from '@/classes/chat/Message';
+import ReadStatus from '@/enums/ReadStatus';
 import { filterDateFromJSONString } from "@/utils/dateFilter"
+import { messageParamsFactory } from '@vuelidate/validators';
 import { followCursor } from 'tippy.js';
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({
@@ -76,6 +83,14 @@ export default defineComponent({
         getStyles(): string {
             const c = this.isCounterMessage
             return this.getBorderStyles + ' ' + `${c ? 'bg-gray-900' : 'bg-blue-300'}`
+        },
+        messageStatus(): string {
+            return this.message.read_status === ReadStatus.READ
+                   ? 'READ' :
+                   this.message.read_status === ReadStatus.SENDED
+                   ? 'SENDED' :
+                   this.message.read_status === ReadStatus.SENDING
+                   ? 'SENDING' : ''
         }
     }
 })

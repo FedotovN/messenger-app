@@ -38,7 +38,10 @@ export default {
             }
         },
         setRoomInfo: (state, info: IRoomInfo) => state.rooms[info.hash] = info,
-        setAllRooms: (state, infos: IRoomInfo[]) => infos.forEach(i => state.rooms[i.hash] = i)
+        setAllRooms: (state, infos: IRoomInfo[]) => { 
+            if(Object.keys(infos).length) infos.forEach(i => state.rooms[i.hash] = i) 
+            else state.rooms = {}
+        }
     },
     actions: {
         setChatListenerByRoomHash(_, 
@@ -66,7 +69,6 @@ export default {
 
             await addDoc(chatRoomRef, {...payload.message})
         },
-        // Prefetching data
         async getRoomInfoByRoomHash({ commit }, room_hash): Promise<Message[]> {
             if(!room_hash) return []
             const chatRoomRef: CollectionReference = collection(firestore, `chats/${room_hash}/messages`),

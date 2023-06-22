@@ -42,6 +42,7 @@
 <script lang="ts">
 import _ from "lodash"
 import { mapGetters } from "vuex"
+import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
 import BaseChatInput from "./BaseChatInput.vue"
@@ -71,8 +72,7 @@ export default defineComponent({
       },
       async sendMessage(text): Promise<void> {
         if(!text) return
-        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text)
-        
+        const message = new Message(new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDING)
         this.messages.push(message)
 
         await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})

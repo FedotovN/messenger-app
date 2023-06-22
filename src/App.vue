@@ -1,6 +1,10 @@
 <template>
   <div class="h-screen">
-    <component :is="layout">
+    <realtime-listener 
+      @ready="loading = false"
+      @start="loading = true"
+    />
+    <component :is="layout" :loadingState="loading">
       <router-view v-slot="{Component}">
         <component :is="transition">
           <component :is="Component">
@@ -13,11 +17,16 @@
 <script>
   import layouts from '@/layouts/index'
   import transitions from '@/transitions/index'
+  import RealtimeListener from './components/App/RealtimeListener.vue'
   export default {
     name: 'App',
+    data: () => ({
+      loading: true
+    }),
     components: {
       ...layouts,
-      ...transitions
+      ...transitions,
+      RealtimeListener
     },
     computed: {
       layout() {
@@ -29,7 +38,9 @@
       }
     },
     async created() {
+      
       this.$store.dispatch('auth/checkAuth')
+
       const config = await this.$store.dispatch('getConfig')
       this.$store.dispatch('applyConfig', config)
     }

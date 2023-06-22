@@ -95,7 +95,6 @@ export default {
                 const inputImage = e.target.files[0]
                 this.imageLoading = true
                 this.form.photoURL = (await getDataURL(inputImage, 90, this.width)).dataUrl 
-                console.log(inputImage, this.form.photoURL)
                 this.imageLoading = false
             }
             catch {

@@ -4,8 +4,9 @@ import contacts from "./contacts"
 import room from './room'
 import Message from '@/classes/chat/Message'
 import Contact from '@/classes/chat/Contact'
-import { DocumentData, QuerySnapshot, disableNetwork } from 'firebase/firestore'
+import { DocumentData, QuerySnapshot } from 'firebase/firestore'
 import { Unsubscribe } from 'firebase/auth'
+import readStatus from '@/enums/ReadStatus'
 export default createStore({
   state: {
   },
@@ -14,7 +15,11 @@ export default createStore({
   mutations: {
   },
   actions: {
-    async addContactsListener({ dispatch, commit }, newContactCallback?: (Message) => void): Promise<{
+    async addContactsListener({ dispatch, commit }, 
+      callbacks :
+      { newContactCallback?: (Contact) => void,
+        newMessageCallback?: (Message) => void,
+        lastMessageCallback?: (Message) => void } | undefined): Promise<{
      contactsListener: Unsubscribe,
      messagesListeners: Unsubscribe[]
     }> 
@@ -31,18 +36,23 @@ export default createStore({
       })}
 
       return {
-        contactsListener: await dispatch('contacts/addContactListListenter', newContactCallback || callbackFallback) as Unsubscribe,
+        contactsListener: await dispatch('contacts/addContactListListenter', callbacks?.newContactCallback || callbackFallback) as Unsubscribe,
         messagesListeners
       }
 
     },
-  async addChatListener({dispatch, commit}, {hash, newMessageCallback} : { hash: string, newMessageCallback?: (Message) => void }): Promise<Unsubscribe> {
+  async addChatListener({dispatch, commit}, {hash, newMessageCallback, lastMessageCallback} : 
+    { hash: string,
+      newMessageCallback?: (Message) => void,
+      lastMessageCallback?: (Message) => void }): 
+    Promise<Unsubscribe> {
       const defaultCallback: (snapshot: QuerySnapshot<DocumentData>) => void = (snapshot: QuerySnapshot<DocumentData>) => {
-          snapshot.docChanges()
+          const messages = snapshot.docChanges()
             .filter(change => change.type === 'added')
             .map(change => change.doc.data())
-            .forEach((message) => {
+          messages.forEach((message) => {
                 const m: Message = message as Message
+                m.read_status = readStatus.SENDED
                 commit('room/pushMessageByHash', 
                 {
                     hash, 
@@ -50,6 +60,8 @@ export default createStore({
                 })
                 if(newMessageCallback) newMessageCallback(m)
             })
+
+          if(lastMessageCallback) lastMessageCallback(messages[messages.length - 1])
       }
       return await dispatch('room/setChatListenerByRoomHash', {
         hash, 

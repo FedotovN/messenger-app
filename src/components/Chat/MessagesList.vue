@@ -78,7 +78,6 @@ export default defineComponent({
     watch: {
         messages: {
             handler(v) {
-                console.log(v)
                 if(v[v.length - 1]?.sended_by_uid === this.uid) {
                     this.scrollToBottom('smooth')
                 }
