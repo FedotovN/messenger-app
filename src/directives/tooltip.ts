@@ -18,6 +18,6 @@ export default {
         tippy(el, ({...config} as unknown as Partial<Props>))
     },
     unmounted(el) {
-        el._tippy.destroy()
+        el._tippy?.destroy()
     }
 }

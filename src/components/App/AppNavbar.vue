@@ -1,5 +1,5 @@
 <template>
-  <div class="h-14 dark:bg-dark-300 bg-gray-100 dark:shadow-none shadow-md sm:hidden flex justify-between">
+  <div class="h-14 dark:bg-dark-300 bg-gray-100 dark:shadow-none shadow-md sm:hidden flex justify-between border-t dark:border-gray-600">
     <base-modal v-model="showModalLogout">
         <template #header>Вы уверены, что хотите выйти?</template>
         <div class="flex gap-2">

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col max-h-[100vh] w-full bg-gray-100 dark:bg-gray-600 relative">
+  <div class="flex flex-col max-h-[100vh] w-full dark:bg-gray-600 relative">
     <base-modal v-model="showProfile" v-if="contactInfo">
       <template #header>
         Пользователь {{ contactInfo.name }}
@@ -35,9 +35,9 @@
           <base-loader size="big" />
       </div>
     </main>
-    <footer class="absolute bottom-0 w-full">
-      <div class="w-full h-full" v-if="contactInfo">
-        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" class="" />
+    <footer class="absolute bottom-0 w-full min-h-[64px] bg-gray-100 dark:bg-gray-700">
+      <div class="flex gap-2 w-full min-h-[64px] p-2" v-if="contactInfo">
+        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" class="self-center" />
       </div>
     </footer>
   </div>
@@ -69,9 +69,9 @@ export default defineComponent({
       openProfile() {
         this.showProfile = true
       },
-      print(text) {
+      print() {
         this.messagesContainer = this.$refs.messages_container as HTMLDivElement
-        this.sendMessage(text)
+        this.sendMessage(this.newMessageText)
       },
       async sendMessage(text): Promise<void> {
         if(!text) return

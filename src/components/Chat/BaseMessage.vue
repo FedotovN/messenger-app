@@ -5,13 +5,26 @@
             class="cursor-pointer rounded-3xl max-w-[calc(100%_-_2rem)] min-h-[1.5rem] h-auto min-w-[4rem] shadow-md inline-flex transition-all px-3 py-2 overflow-hidden"
             :class="getStyles">
             <base-tooltip :options="{ allowHTML: true, trigger: 'click', followCursor: true }">
-                <div class="flex flex-col w-32 gap-2">
-                    <div class="flex justify-between items-center h-6 w-full rounded-md">
-                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
-                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
-                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
-                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
-                        <div class="w-4 h-4 rounded-full hover:bg-gray-800 bg-gray-950 transition-colors cursor-pointer"></div>
+                <div class="flex flex-col w-36 gap-2">
+                    <div class="flex justify-between items-center h-6 w-full rounded-md py-6">
+                        <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
+                            😀
+                        </div>
+                        <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
+                            🥳
+                        </div>
+                        <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
+                            😭
+                        </div>
+                        <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
+                            🤯
+                        </div>
+                        <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
+                            🤡
+                        </div>
+                        <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
+                            🥵
+                        </div>
                     </div>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="$emit('delete', message.id)">Удалить</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Редактировать</p>

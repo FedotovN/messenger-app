@@ -1,8 +1,14 @@
 <template>
-  <div class="flex flex-col max-w-full">
+  <div class="flex w-full gap-2 max-w-full">
+    <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" v-tooltip="'emoji'">
+        <span class="sm:text-lg">😋</span>
+        <base-tooltip :options="{trigger: 'click'}">
+        😋😋😋😋😋
+        </base-tooltip>
+    </div>
     <textarea
     :placeholder="placeholder"
-    class="flex w-full p-2 dark:text-gray-300 text-gray-600 whitespace-wrap overflow-auto bg-gray-200 dark:bg-gray-700 sm:bg-transparent outline-none scrollbar-hide resize-none m-0 focus:bg-gray-200 dark:focus:bg-gray-700 transition-colors"
+    class="text-sm sm:text-md rounded-2xl bg-gray-200 dark:bg-gray-800 flex w-full p-2 dark:text-gray-300 text-gray-600 whitespace-wrap overflow-auto outline-none scrollbar-hide resize-none m-0 focus:bg-gray-200 dark:focus:bg-gray-900 transition-colors"
     ref="textarea"
     :value="modelValue"
     @focusin="focused = true"
@@ -11,6 +17,9 @@
     @keydown.shift.enter="pushEnter"
     @keydown.enter.prevent.exact="onEnter"
     ></textarea>
+    <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" @click="onEnter" v-tooltip="'Отправить'">
+        <i class="block fa-solid fa-paper-plane text-gray-700 group-hover:text-gray-800 dark:text-gray-500 dark:group-hover:text-gray-400 transition-colors"></i>
+    </div>
     </div>
 </template>
 
@@ -33,7 +42,7 @@ export default defineComponent({
         minHeight: {
             type: Number,
             required: false,
-            default: 64
+            default: 32
         },
         chatPartner: {
             type: String,
@@ -57,7 +66,7 @@ export default defineComponent({
             this.$emit('update:modelValue', e.target.value)
         },
         onEnter(e) {
-            this.$emit('enter', e.target.value)
+            this.$emit('enter')
             this.$emit('update:modelValue', '')
             this.$nextTick(() => {
                 this.calculateStyles()
