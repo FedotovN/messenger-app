@@ -123,5 +123,8 @@
             "users": "Users",
             "back": "Back"
         }               
+    },
+    "time": {
+        "justNow": "now"
     }
 }
