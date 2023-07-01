@@ -65,17 +65,6 @@ export default defineComponent({
         unreadMessages() {
             return this.$store.getters['room/getUnreadMessagesAmount'](this.contact.room_hash)
         }
-    },
-    watch: {
-        lastMessage(v) {
-            if(!v) return
-            const counter_message: boolean = v.sended_by_uid !== this.uid,
-                  other_chat: boolean = this.chatId !== v.sended_by_uid
-
-            if(counter_message && other_chat && !this.firstUpload) {
-                this.$toast.show(`${v.sended_by_name}: ${v.content}`)
-            } else this.firstUpload = false
-        }
     }
 })
 </script>

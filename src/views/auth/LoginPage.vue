@@ -42,12 +42,15 @@
                     <base-button type="submit">{{ $t('form.buttons.continue') }}</base-button>
                     <p class="flex gap-2 w-full text-xs dark:text-gray-300 text-gray-700">{{$t('phrases.noAccount')}} <base-link :to="{name: 'register'}"> {{$t('links.internal.joinUs')}}</base-link></p>
                     
-                    <div class="flex gap-3 items-center text-xs">
-                        <base-link to="https://github.com/FedotovN"> <i class="fa-brands fa-github"></i> Github</base-link>
-                        <div class="h-1 w-1 bg-gray-400 rounded-full"></div>
-                        <base-link to="https://t.me/FedotovN1"> <i class="fa-brands fa-telegram"></i> Telegram</base-link>
-                        <div class="h-1 w-1 bg-gray-400 rounded-full"></div>
-                        <base-link to="https://vk.com/fedotovn1"> <i class="fa-brands fa-vk"></i> VK</base-link>
+                    <div class="flex justify-between items-center">
+                        <div class="flex gap-3 items-center text-xs">
+                            <base-link to="https://github.com/FedotovN"> <i class="fa-brands fa-github"></i> Github</base-link>
+                            <div class="h-1 w-1 bg-gray-400 rounded-full"></div>
+                            <base-link to="https://t.me/FedotovN1"> <i class="fa-brands fa-telegram"></i> Telegram</base-link>
+                            <div class="h-1 w-1 bg-gray-400 rounded-full"></div>
+                            <base-link to="https://vk.com/fedotovn1"> <i class="fa-brands fa-vk"></i> VK</base-link>
+                        </div>
+                        <base-link v-if="user" :to="{name: 'main', params: {}}" class="text-xs overlfow-hidden whitespace-nowrap text-ellipsis">Вы уже авторизованы</base-link>
                     </div>
                     <div class="flex w-full justify-between">
                         <transition name="appear">
@@ -147,6 +150,11 @@ export default {
     mounted() {
         if(this.$route.query.message)
             this.$toast.show(this.$t('form.operations.messages.'+this.$route.query.message))
+    },
+    computed: {
+        user() {
+            return this.$store.getters['auth/getUser']
+        }
     }
 }
 </script>

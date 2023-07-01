@@ -13,12 +13,15 @@
         <i class="fa-solid fa-angle-left text-xl"></i>
       </div>
       <div class="flex gap-2 items-center h-full cursor-pointer " @click="openProfile" v-if="!loading">
-        <div class="flex items-center justify-center min-h-[2.5rem] min-w-[2.5rem] max-h-[2rem] max-w-[2rem] bg-gray-300 rounded-full overflow-hidden">
-          <img :src="contactInfo?.photoURL" v-if="contactInfo?.photoURL" alt="" class="h-full w-full object-cover">
+        <div class="flex items-center justify-center min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] bg-gray-300 rounded-full overflow-hidden">
+          <img :src="contactInfo?.photoURL" v-if="contactInfo?.photoURL" alt="" class="h-[2.5rem] w-[2.5rem] object-cover">
         </div>
         <div class="flex-1 overflow-hidden" v-if="contactInfo?.name">
-          <p class="font-semibold text-ellipsis overflow-hidden w-full dark:text-gray-300 text-gray-300">
+          <p class="font-semibold text-ellipsis overflow-hidden w-full dark:text-gray-300 text-gray-300 text-sm">
             {{ contactInfo.name }}
+          </p>
+          <p class="font-semibold text-ellipsis overflow-hidden w-full dark:text-gray-500 text-gray-500 text-xs">
+            {{ contactInfo.uid }}
           </p>
         </div>
       </div>
