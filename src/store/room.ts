@@ -17,12 +17,15 @@ export default {
     getters: {
         getRoomInfo: (s) => (hash: string): IRoomInfo => s.rooms[hash],
         getRoomMessages: (s) => (hash: string): Message[] => s.rooms[hash]?.messages,
-        getLastRoomMessage: (s) => (hash: string): Message => {
-            console.log(s.rooms[hash]?.messages.slice(-1)[0])
-            return s.rooms[hash]?.messages.slice(-1)[0] 
-        },
+        getLastRoomMessage: (s) => (hash: string): Message => s.rooms[hash]?.messages.slice(-1)[0],
         getUnreadMessagesAmount: (s) => (hash: string): number | undefined => {
             return s.rooms[hash]?.messages.filter(m => m.readStatus != readStatus.READ).length
+        },
+        getAllMessages: (s) => {
+            return Object.keys(s.rooms).map(room_hash => {
+                const room: IRoomInfo = s.rooms[room_hash]
+                return room.messages
+            })
         },
         getAllRooms
         : (s): IRoomInfo[] => s.rooms ,

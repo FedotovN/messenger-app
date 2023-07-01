@@ -46,17 +46,17 @@ export default defineComponent({
         contactsListener: null as unknown as Unsubscribe,
         users: [] as Contact[]
     }),
-    created() {
-        this.users = this.getContacts || []
+    async created() {
+        this.users = await this.getSortedContacts() || []
     },
     watch: {
-        search(newVal: string) {
+        async search(newVal: string) {
            if(this.debouncedQuery) {
             this.debouncedQuery.cancel()
             this.loading = false
            }
            if(!newVal.length) {
-            this.users = this.getContacts || []
+            this.users = await this.getSortedContacts() || []
             return
            }
 
@@ -66,11 +66,20 @@ export default defineComponent({
            this.debouncedQuery =  _.debounce(this.searchUser, 400)
            this.debouncedQuery(newVal)
            this.loading = true
+        },
+        getAllMessages: {
+            async handler() {
+                if(!this.search.length) {
+                    this.users = await this.getSortedContacts() 
+                }
+            },
+            deep: true
         }
     },
     methods: {
         ...mapActions('contacts', {
             getUser: 'fetchUsersByName',
+            getSortedContacts: 'getSortedContacts'
         }),
         searchContact(q: string): void {
             this.users = this.getContact(q) as Contact []
@@ -82,10 +91,15 @@ export default defineComponent({
     },
     computed: {
         ...mapGetters('auth', {currUser: 'getUser'}),
-        ...mapGetters('contacts', ['getContacts', 'getContact']),
+        ...mapGetters('contacts', {
+            getContact: 'getContact'
+        }),
         contactsNames() {
             return this.getContacts.map(c => c.name)
-        }
+        },
+        ...mapGetters('room', {
+            getAllMessages: 'getAllMessages'
+        })
     }
 })
 </script>

@@ -52,13 +52,12 @@ export default defineComponent({
                     const listener = this.$watch(
                         lastMessage,
                         (newValue: Message) => {
-                            console.log(this.firstUpload)
                             if(this.firstUpload) return
-                            const counter_message: boolean = newValue.sended_by_uid !== this.uid,
-                            other_chat: boolean = this.chatId !== newValue.sended_by_uid
+                            const counter_message: boolean = newValue?.sended_by_uid !== this.uid,
+                            other_chat: boolean = this.chatId !== newValue?.sended_by_uid
 
                             if(counter_message && other_chat) {
-                                this.$toast.show(`${newValue.sended_by_name}: ${newValue.content}`)
+                                this.$toast.show(`${newValue?.sended_by_name}: ${newValue?.content}`)
                             }
                         }, {deep: true}
                     )
@@ -76,7 +75,7 @@ export default defineComponent({
             return this.$route.params.chatId
         },
         uid() {
-            return this.user.uid
+            return this.user?.uid
         },
         ...mapGetters('auth', {
             user: 'getUser'

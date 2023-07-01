@@ -1,10 +1,11 @@
 /*eslint-disable*/
 import Contact from '@/classes/chat/Contact';
+import Message from '@/classes/chat/Message';
 import { firestore } from '@/firebase/config'
 import { Unsubscribe } from 'firebase/auth';
 import { getDocs, getDoc, collection,
     CollectionReference, DocumentReference, doc,
-    DocumentData, setDoc, onSnapshot, QuerySnapshot } from 'firebase/firestore'
+    DocumentData, setDoc, onSnapshot, QuerySnapshot, Timestamp } from 'firebase/firestore'
 
 type contactKey = { uid: string; room_hash: string }
 export default {
@@ -34,6 +35,33 @@ export default {
         }
     },
     actions: {
+        getSortedContacts({state, rootGetters}): Contact[] {
+            type temporaryKey = {contact: Contact, lastMessage: Message}
+            const contacts = state.contacts as Contact[]
+            let sortedArr: Contact[] = contacts
+                  .map((contact: Contact) => {
+                    const { room_hash } = contact,
+                          lastMessage = rootGetters['room/getLastRoomMessage'](room_hash)
+                    return {contact, lastMessage} as temporaryKey
+                  })
+                  .sort((a: temporaryKey, b: temporaryKey) => {
+                    const getNativeDate = (timestamp: Timestamp | Date | null) => {
+                        if(timestamp instanceof Timestamp) return timestamp.toDate()
+                        else {
+                            if(timestamp === null) return new Date()
+                            else return timestamp
+                        }
+                    },
+                          first_timestamp = +getNativeDate(a.lastMessage?.created_at),
+                          second_timestamp = +getNativeDate(b.lastMessage?.created_at)
+                    if(first_timestamp > second_timestamp) return -1
+                    else return 1
+                  })
+                  .map(temporaryObj => {
+                    return temporaryObj.contact
+                  })
+            return sortedArr
+        },
         async fetchUsersByName({dispatch}: any, { name }: {name: string}): Promise<Object[]> {
             const usersCollectionRef: CollectionReference = collection(firestore, 'users/'),
                   res: Object[] = [],
