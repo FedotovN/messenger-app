@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-full gap-2 max-w-full">
-    <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" v-tooltip="'emoji'">
-        <span class="sm:text-lg">😋</span>
+    <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" v-tooltip="'Эмодзи'">
+        <span class="sm:text-lg">{{emoji}}</span>
         <base-tooltip :options="{trigger: 'click'}">
             <base-emoji @pushEmoji="onEmojiPick"></base-emoji>
         </base-tooltip>
@@ -26,6 +26,7 @@
 <script lang=ts>
 
 import { defineComponent } from 'vue'
+import {getRandomEmoji} from '@/utils/emoji'
 export default defineComponent({
     name: "BaseChatInput",
     props: {
@@ -53,9 +54,11 @@ export default defineComponent({
     data: () => ({
         textarea: null as unknown as HTMLTextAreaElement,
         height: '',
-        focused: false
+        focused: false,
+        emoji: ''
     }),
     methods: {
+        getRandomEmoji,
         calculateStyles(): void {
             const roundHeight = (h) => {return h > this.maxHeight ? this.maxHeight : h}
             this.textarea.style.height = this.minHeight + 'px' || 'auto'
@@ -93,6 +96,12 @@ export default defineComponent({
     mounted() {
         this.textarea = this.$refs.textarea
         this.calculateStyles()
+        this.emoji = this.getRandomEmoji()
+    },
+    watch: {
+        placeholder() {
+            this.emoji = this.getRandomEmoji()
+        }
     },
     computed: {
         placeholder(): string {
