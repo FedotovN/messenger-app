@@ -3,7 +3,7 @@
     <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" v-tooltip="'emoji'">
         <span class="sm:text-lg">😋</span>
         <base-tooltip :options="{trigger: 'click'}">
-        😋😋😋😋😋
+            <base-emoji @pushEmoji="onEmojiPick"></base-emoji>
         </base-tooltip>
     </div>
     <textarea
@@ -60,6 +60,11 @@ export default defineComponent({
             const roundHeight = (h) => {return h > this.maxHeight ? this.maxHeight : h}
             this.textarea.style.height = this.minHeight + 'px' || 'auto'
             this.textarea.style.height = roundHeight(this.textarea.scrollHeight) + 'px'
+        },
+        onEmojiPick(e) {
+            const v = this.modelValue
+            this.$refs.textarea.focus()
+            this.onInput({target:{value: v + e}})
         },
         onInput(e) {
             this.calculateStyles()

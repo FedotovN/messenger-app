@@ -5,9 +5,9 @@ import BaseLink from "./BaseLink.vue"
 import BaseLoader from "./BaseLoader.vue"
 import BaseTextarea from "./BaseTextarea.vue"
 import BaseModal from './BaseModal.vue'
-
+import BaseEmoji from "./BaseEmoji.vue"
 export default {
     BaseInput, BaseButton, BaseCheckbox,
     BaseLink, BaseLoader, BaseTextarea,
-    BaseModal
+    BaseModal, BaseEmoji
 }
