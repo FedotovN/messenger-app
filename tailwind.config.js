@@ -149,7 +149,7 @@ module.exports = {
         400: 'eee'
       },
       dark: {
-        300: '#0E1923',
+        300: '#1a2f41',
         200: '#1C3144'
       },
       inherit: colors.inherit,

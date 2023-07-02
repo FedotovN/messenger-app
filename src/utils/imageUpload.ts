@@ -1,9 +1,31 @@
-type dataURL = {
+export interface dataURL {
     dataUrl: string,
     additionalData: string,
     coded: string
 }
-function getDataURL(inputImage: Blob, compress: number, width: number, height: number): Promise<dataURL> {
+function getImageRatio(HTMLImage: HTMLImageElement, containerPixelWidth: number) {
+    console.log(containerPixelWidth / HTMLImage.naturalWidth)
+    return containerPixelWidth / HTMLImage.naturalWidth
+}
+async function onImagePaste(e): Promise<dataURL | null>{
+    const item = (e.clipboardData || e.originalEvent.clipboardData).items[0];
+        if (item.kind === 'file') {
+            const blob = item.getAsFile();
+            return await getDataURL(blob, 0.9, 200, 260)
+        }
+    return null
+}
+function changeImageSize(imageElement:HTMLImageElement, width: number, height?: number): string {
+    const canvas: HTMLCanvasElement = document.createElement('canvas'),
+            ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+        canvas.width = width
+        if(!height) canvas.height = imageElement.height * getImageRatio(imageElement, width)
+        else canvas.height = height
+        ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height)
+        return ctx.canvas.toDataURL('image/jpeg')
+        
+}
+function getDataURL(inputImage: Blob, compress: number, width: number, maxHeight?: number, height?: number,): Promise<dataURL> {
     return new Promise(resolve => {
         const reader = new FileReader()
         reader.readAsDataURL(inputImage)
@@ -12,12 +34,17 @@ function getDataURL(inputImage: Blob, compress: number, width: number, height: n
             const imageElement: HTMLImageElement = document.createElement('img')
             imageElement.src = imageDataUrl
             imageElement.onload = function (this: GlobalEventHandlers, e: Event) {
-                const ratio = width / (e.target as HTMLImageElement).width,
-                    canvas: HTMLCanvasElement = document.createElement('canvas'),
-                    ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+                
+                const width_ratio = width / (e.target as HTMLImageElement).width,
+                canvas: HTMLCanvasElement = document.createElement('canvas'),
+                ctx = canvas.getContext('2d') as CanvasRenderingContext2D
                 canvas.width = width
-                if(!height) canvas.height = (e.target as HTMLCanvasElement).height * ratio
+                if(!height) canvas.height = (e.target as HTMLCanvasElement).height
                 else canvas.height = height
+
+                
+                canvas.height *= width_ratio
+
                 
                 ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height)
                 const newImageDataUrl = ctx.canvas.toDataURL('image/jpeg', compress)
@@ -52,4 +79,4 @@ async function getGeneratedAvatar(q = ''): Promise<string> {
     if(res.status != 200) throw(new Error())
     else return res.url
 }
-export { getDataURL, getGeneratedAvatar, URLtoFile }
+export { getDataURL, getGeneratedAvatar, URLtoFile, onImagePaste, changeImageSize }

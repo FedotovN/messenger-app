@@ -29,7 +29,8 @@ export default {
     themes: {
       'primary': 'bg-primary-100 text-white hover:bg-primary-200 border-2 border-primary-100 hover:border-primary-200',
       'alert': 'bg-rose-600 text-white hover:bg-rose-700 border-2 border-rose-600 hover:border-rose-700',
-      'passive': 'bg-white border border-blue-600 text-black hover:bg-gray-200 dark:bg-dark-200 dark:text-gray-300'
+      'passive': 'bg-white border border-blue-600 text-black hover:bg-gray-200 dark:bg-dark-200 dark:text-gray-300',
+      'neutral': 'dark:hover:bg-dark-300 hover:bg-gray-200 cursor-pointer'
     }
   })
 }

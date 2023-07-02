@@ -2,9 +2,10 @@
     <div class="w-full h-auto gap-2 items-center flex group" :class="{'justify-end flex-row': !isCounterMessage}">
         <small class="text-gray-500 dark:text-gray-300 text-xs will-dissapear group-hover:opacity-100 opacity-0 transition-all" v-show="!isCounterMessage">{{filterDate(message.sended_at)}}</small>
         <div
+            @click="showTooltip = true"
             class="cursor-pointer rounded-3xl max-w-[calc(100%_-_2rem)] min-h-[1.5rem] h-auto min-w-[4rem] shadow-md inline-flex transition-all px-3 py-2 overflow-hidden"
             :class="getStyles">
-            <base-tooltip :options="{ allowHTML: true, trigger: 'click', followCursor: true }">
+            <base-tooltip :options="{ allowHTML: true, trigger: 'click', followCursor: 'initial'}" v-if="showTooltip">
                 <div class="flex flex-col w-36 gap-2">
                     <div class="flex justify-between items-center h-6 w-full rounded-md py-6">
                         <div class="w-4 h-4 rounded-full cursor-pointer text-lg scale-75 hover:scale-100 transition-all">
@@ -26,7 +27,7 @@
                             🥵
                         </div>
                     </div>
-                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="$emit('delete', message.id)">Удалить</p>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="onDelete">Удалить</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Редактировать</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Переслать</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Сохранить</p>
@@ -54,10 +55,9 @@
 import Message from '@/classes/chat/Message';
 import ReadStatus from '@/enums/ReadStatus';
 import { filterDateFromJSONString } from "@/utils/dateFilter"
-import { messageParamsFactory } from '@vuelidate/validators';
-import { followCursor } from 'tippy.js';
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({
+    data: () => ({ showTooltip: true }),
     name: 'BaseMessage',
     props: {
         message: {
@@ -78,6 +78,15 @@ export default defineComponent({
     methods: {
         filterDate(stringified) {
             return filterDateFromJSONString(stringified)
+        },
+        onClick(method, arg?) {
+            this[method]?.(arg)
+            
+            this.showTooltip = false
+        },
+        onDelete(message){
+            this.$emit('delete', message.id)
+            this.showTooltip = false
         }
     },
     computed: {

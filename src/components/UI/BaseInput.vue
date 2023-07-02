@@ -16,6 +16,7 @@
             </label>
 
             <input
+                ref="input"
                 :value="modelValue || value"
                 :name="id"
                 :id="id"
@@ -77,6 +78,11 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        },
+        autofocus: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     data() {
@@ -87,6 +93,11 @@ export default {
     },
     created(){
         this.id = 'input-' + Math.random()
+    },
+    mounted() {
+        if(this.autofocus) {
+            this.$refs.input.focus()
+        }
     },
     methods: {
         activateInput() {
