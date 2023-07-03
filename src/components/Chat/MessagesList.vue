@@ -4,8 +4,8 @@
         <template #header > Подтверждение операции</template>
         <p class="text-sm text-gray-600 dark:text-gray-400">Вы уверены, что хотите {{ operationName }} ?</p>
         <div class="flex gap-2 pt-2">
-            <base-button class="flex-1" theme="alert" @click="deleteMessage">Удалить</base-button>
-            <base-button class="flex-2" theme="passive" @click="showConfirmDialog = false">Отмена</base-button>
+            <base-button theme="alert" @click="deleteMessage">Удалить</base-button>
+            <base-button theme="neutral" @click="showConfirmDialog = false">Отмена</base-button>
         </div>
     </base-modal>
     <div class="absolute top-2 left-1/2 -translate-x-1/2 z-50">
@@ -15,6 +15,7 @@
     </div>
     <div class="flex flex-col gap-2 px-2 py-1 overflow-scroll scrollbar-hide h-full relative" ref="messages_container" v-on-scroll="{callback: showDateBadge}">
         <base-message
+        :parentElement="containter"
         :isCounterMessage="isCounterMessage(message.sended_by_uid)"
         v-for="(message, ind) in messages"
         :message="message"

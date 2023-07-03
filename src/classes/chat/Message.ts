@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import ImageMessageContent from "@/interfaces/ImageMessageContent";
 import ReadStatus from '@/enums/ReadStatus'
 export default class Message {
     constructor(
@@ -8,7 +9,7 @@ export default class Message {
         readonly sended_by_uid: string,
         readonly sended_by_name: string,
         readonly sended_by_photo_url: string,
-        public content: string,
+        public content: ImageMessageContent | string,
         public read_status: ReadStatus
     ){}
 }

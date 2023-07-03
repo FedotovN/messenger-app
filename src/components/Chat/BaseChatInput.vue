@@ -6,18 +6,20 @@
             <div class="w-full flex justify-center items-center h-64">
                 <img :src="imageDataUrl.dataUrl" alt="" ref="image" class="object-contain max-h-full h-full"/>
             </div>
-            <base-input label="Добавить подпись..." autofocus></base-input>
+            <div class="flex gap-2 items-center justify-center">
+                <base-input label="Добавить подпись..." autofocus v-model="imageMessage" class="w-full"></base-input>
+            </div>
         </div>
         <template #footer>
             <div class="flex gap-2 py-2">
-                <base-button @click="showImagePopup = false" theme="neutral">Отмена</base-button>
-                <base-button>Отправить</base-button>
+                <base-button @click="showImagePopup = false" theme="passive">Отмена</base-button>
+                <base-button @click="sendImage">Отправить</base-button>
             </div>
         </template>
     </base-modal>
      <div class="flex w-full gap-2 max-w-full">
        <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" v-tooltip="'Эмодзи'">
-           <span class="sm:text-lg">{{emoji}}</span>
+           <span class="sm:text-lg" v-tooltip="'Эмодзи'">{{emoji}}</span>
            <base-tooltip :options="{trigger: 'click'}">
                <base-emoji @pushEmoji="onEmojiPick"></base-emoji>
            </base-tooltip>
@@ -47,7 +49,7 @@
 
 import { defineComponent } from 'vue'
 import { getRandomEmoji } from '@/utils/emoji'
-import { dataURL, onImagePaste } from '@/utils/imageUpload'
+import { dataURL, onImagePaste,  } from '@/utils/imageUpload'
 export default defineComponent({
     name: "BaseChatInput",
     props: {
@@ -79,7 +81,8 @@ export default defineComponent({
         emoji: '',
         showImagePopup: false,
         imageDataUrl: {} as dataURL,
-        imageElement: null as unknown as HTMLImageElement
+        imageElement: null as unknown as HTMLImageElement,
+        imageMessage: ''
     }),
     methods: {
         getRandomEmoji,
@@ -89,10 +92,15 @@ export default defineComponent({
             this.textarea.style.height = this.minHeight + 'px' || 'auto'
             this.textarea.style.height = roundHeight(this.textarea.scrollHeight) + 'px'
         },
-        onEmojiPick(e) {
-            const v = this.modelValue
+        onEmojiPick(e, model?) {
+            const v = model ? this[model] : this.modelValue
+
+            this.onInput({target:{value: v + e}}, model)
             this.$refs.textarea.focus()
-            this.onInput({target:{value: v + e}})
+        },
+        async sendImage() {
+            this.$emit('sendImage', {url: this.imageDataUrl.dataUrl, desc: this.imageMessage})
+            this.showImagePopup = false
         },
         async onPaste(e){
             this.imageDataUrl = await this.onImagePaste(e)
@@ -101,16 +109,15 @@ export default defineComponent({
                 img.src = this.imageDataUrl.dataUrl
                 img.onload = (e) => {
                     this.textarea.blur()
-                    //const imageElement = e.target as HTMLImageElement
-                    // img.src = changeImageSize(imageElement, 250)
                     this.showImagePopup = true
                     img.onload = null
                 }
             }
         },
-        onInput(e) {
+        onInput(e, model?) {
             this.calculateStyles()
-            this.$emit('update:modelValue', e.target.value)
+            if(model) this[model] += e.target.value
+            else this.$emit('update:modelValue', e.target.value)
         },
         onEnter(e) {
             this.$emit('enter')

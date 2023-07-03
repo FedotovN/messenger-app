@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col max-h-[100vh] w-full dark:bg-gray-600 relative">
+  <div class="flex flex-col max-h-[100vh] w-full dark:bg-gray-600 relative overflow-hidden">
     <base-modal v-model="showProfile" v-if="contactInfo">
       <template #header>
         Пользователь {{ contactInfo.name }}
@@ -37,7 +37,7 @@
     </main>
     <footer class="absolute bottom-0 w-full min-h-[64px] bg-gray-100 dark:bg-gray-700">
       <div class="flex gap-2 w-full min-h-[64px] p-2" v-if="contactInfo">
-        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" class="self-center" />
+        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" @sendImage="sendImage" class="self-center" />
       </div>
     </footer>
   </div>
@@ -50,7 +50,9 @@ import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
 import BaseChatInput from "./BaseChatInput.vue"
 import MessagesList from "./MessagesList.vue"
+import ImageMessageContent from "@/interfaces/ImageMessageContent"
 import { defineComponent } from "vue"
+import { sendImageToRoom } from "@/utils/imageUpload"
 export default defineComponent({
     name: "ChatLayout",
     components: { BaseChatInput, MessagesList },
@@ -71,15 +73,35 @@ export default defineComponent({
       },
       print() {
         this.messagesContainer = this.$refs.messages_container as HTMLDivElement
-        this.sendMessage(this.newMessageText)
-      },
-      async sendMessage(text): Promise<void> {
-        if(!text) return
         const id = Math.random() + ""
-        const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, text, readStatus.SENDING)
-        this.messages.push(message)
+        const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, this.newMessageText, readStatus.SENDING)
 
-        await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})
+        this.sendMessage(message)
+      },
+      async sendImage({url, desc}): Promise<void> {
+        const id = Math.random() + ""
+        const uploadUrl = await sendImageToRoom(url, id, this.chatId)
+        if(uploadUrl) {
+          const imageMessageContainer: ImageMessageContent = {
+            uploadImageURL: uploadUrl,
+            description: desc
+          }
+          const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, imageMessageContainer, readStatus.SENDING)
+          
+          this.sendMessage(message)
+        }
+        else {
+          console.warn('Unable to send image message')
+        }
+      },
+      async sendMessage(message): Promise<void> {
+        try {
+          this.messages.push(message)
+          await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})
+        }
+        catch(e) {
+          console.warn(e)
+        } 
       },
       async getContactInfo(): Promise<Contact> {
         const counterUid = this.$route.params.chatId
@@ -128,6 +150,9 @@ export default defineComponent({
       },
       getMessages() {
         return this.getRoomInfo(this.getRoomHash)?.messages || []
+      },
+      chatId() {
+        return this.$route.params.chatId
       }
     }
 })
