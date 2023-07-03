@@ -671,6 +671,10 @@ video {
   margin-bottom: 1.5rem;
 }
 
+.mb-\[5px\] {
+  margin-bottom: 5px;
+}
+
 .mr-12 {
   margin-right: 3rem;
 }
@@ -685,14 +689,6 @@ video {
 
 .mt-7 {
   margin-top: 1.75rem;
-}
-
-.mt-\[5px\] {
-  margin-top: 5px;
-}
-
-.mb-\[5px\] {
-  margin-bottom: 5px;
 }
 
 .block {
@@ -803,10 +799,6 @@ video {
   height: 100vh;
 }
 
-.h-72 {
-  height: 18rem;
-}
-
 .max-h-8 {
   max-height: 2rem;
 }
@@ -907,8 +899,8 @@ video {
   width: 1.5rem;
 }
 
-.w-96 {
-  width: 24rem;
+.w-64 {
+  width: 16rem;
 }
 
 .w-\[120px\] {
@@ -945,10 +937,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-64 {
-  width: 16rem;
 }
 
 .min-w-\[\.75rem\] {
@@ -1411,6 +1399,11 @@ video {
           background-clip: text;
 }
 
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -1446,11 +1439,6 @@ video {
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
-}
-
-.px-\[10px\] {
-  padding-left: 10px;
-  padding-right: 10px;
 }
 
 .py-1 {
@@ -1491,8 +1479,8 @@ video {
   padding-bottom: 1rem;
 }
 
-.pb-\[10px\] {
-  padding-bottom: 10px;
+.pb-\[5px\] {
+  padding-bottom: 5px;
 }
 
 .pl-1 {
@@ -1523,8 +1511,8 @@ video {
   padding-top: 0.5rem;
 }
 
-.pb-\[5px\] {
-  padding-bottom: 5px;
+.pt-\[25px\] {
+  padding-top: 25px;
 }
 
 .text-center {
@@ -1683,6 +1671,11 @@ video {
 .outline-none {
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .transition {
@@ -1939,7 +1932,7 @@ video {
 
 :is(.dark .dark\:bg-dark-300) {
   --tw-bg-opacity: 1;
-  background-color: rgb(14 25 35 / var(--tw-bg-opacity));
+  background-color: rgb(26 47 65 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:bg-gray-600) {
@@ -2005,6 +1998,11 @@ video {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+:is(.dark .dark\:hover\:bg-dark-300:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(26 47 65 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:hover\:bg-gray-600:hover) {
