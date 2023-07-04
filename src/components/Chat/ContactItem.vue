@@ -12,10 +12,12 @@
                         <p class="flex-1 text-sm font-semibold overflow-hidden text-ellipsis whitespace-nowrap dark:text-gray-300 text-gray-700">{{contact.name}}</p> 
                         <div class="flex w-full justify-between overflow-hidden text-sm whitespace-nowrap" v-if="lastMessage">
                             <small class="overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold flex-1 pr-2">
-                                <span class="dark:text-gray-300 text-gray-700">{{ lastMessage?.sended_by_name }}:</span> {{ lastMessage?.content }}
+                                <span class="dark:text-gray-300 text-gray-700">{{ lastMessage?.sended_by_name }}: </span>
+                                <span v-if="isTextMessage(lastMessage?.content)"> {{ lastMessage.content }}</span>
+                                <span v-else class="text-green-300">Картинка 🖼️</span>
                             </small>
                             <small class="text-end inline-block overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold">
-                                {{ getTimeFromDate(lastMessage?.created_at) }}
+                                {{ lastMessage?.created_at ? getTimeFromDate(lastMessage.created_at) : ''}}
                             </small>
                         </div>         
                     </div>
@@ -53,7 +55,10 @@ export default defineComponent({
         ...mapActions('room', ['setChatListenerByRoomHash']),
         onClick() {
             this.$router.push({name: 'chat', params: {chatId: this.contact.uid}})
-        }
+        },
+        isTextMessage(content): content is string {
+            return !Object.keys(content).includes('uploadImageURL')
+        },
     },
     computed: {
         uid() {

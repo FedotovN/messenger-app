@@ -22,8 +22,8 @@
                         :class="{'text-gray-300': isCounterMessage, 
                                  'text-gray-700': !isCounterMessage}">{{message.content}}</p>
                     <div class="flex flex-col gap-2" v-else>
-                        <div class="div flex justify-center p-1 flex-col gap-2">
-                            <img :src="message.content.uploadImageURL" alt="" class="object-cover rounded-2xl">
+                        <div class="flex justify-center items-center p-1 flex-col gap-2 max-w-xl min-w-[100px]">
+                            <img :src="message.content.uploadImageURL" alt="" class="object-cover rounded-2xl max-h-[320px]">
                         </div>
                             <small class="text-sm text-ellipsis px-2 overflow-hidden"
                             :class="{'text-gray-300': isCounterMessage, 
