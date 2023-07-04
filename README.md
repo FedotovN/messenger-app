@@ -1,10 +1,10 @@
 
-# Messager application
+# Messenger application
 
 
 ## Demo
-![2023-06-17 13-18-14 (1)](https://github.com/FedotovN/messenger-app/assets/53238017/9b852f64-731e-4a7e-a0a6-e7df809d1a31)
 
+![2023-07-04 03-26-28](https://github.com/FedotovN/messenger-app/assets/53238017/ae114158-4528-42e7-bd26-5ca1f0583d06)
 
 ## Tech Stack
 ![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)
@@ -15,7 +15,7 @@
 ## Features
 
 - Light/dark mode toggle and adaptive design using Tailwind CSS
-- Firebase Auth with password recovery and verification
+- Firebase Auth with password recovery and email verification
   - Forms validation using Vuelidate
   - Random password generator
 - Internalization with i18n library (Ru-En)
@@ -24,7 +24,7 @@
 - Emoji picker 🤟
  
 ## To-Do 📈
-
+- [ ] - Change login and registration header from "Task tracker" to "Messenger" finally
 - [ ] - Friend list
 - [ ] - Group chats
 - [ ] - Messages forward
