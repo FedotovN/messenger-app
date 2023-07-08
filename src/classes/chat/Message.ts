@@ -10,6 +10,6 @@ export default class Message {
         readonly sended_by_name: string,
         readonly sended_by_photo_url: string,
         public content: ImageMessageContent | string,
-        public read_status: ReadStatus
+        public readStatus: ReadStatus
     ){}
 }

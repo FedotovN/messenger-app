@@ -1,14 +1,14 @@
 import IRoomInfo from "@/interfaces/RoomInfo";
 import Message from "@/classes/chat/Message";
+import ReadStatus from "@/enums/ReadStatus";
 import cyrb53 from "@/utils/hashGenerator";
 import { firestore } from "@/firebase/config";
 
 import { QuerySnapshot, DocumentData, CollectionReference,
          collection, query, orderBy, onSnapshot,
-         setDoc, getDocs, DocumentReference, doc, deleteDoc } from "firebase/firestore";
+         setDoc, getDocs, DocumentReference, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
 import { Unsubscribe } from "firebase/auth";
-import readStatus from "@/enums/ReadStatus";
 export default {
     namespaced: true,
     state: () => ({
@@ -17,9 +17,10 @@ export default {
     getters: {
         getRoomInfo: (s) => (hash: string): IRoomInfo => s.rooms[hash],
         getRoomMessages: (s) => (hash: string): Message[] => s.rooms[hash]?.messages,
+        getRoomMessage: (s) => (hash: string, id: string): Message => s.rooms[hash]?.messages?.find(m => m.id === id),
         getLastRoomMessage: (s) => (hash: string): Message => s.rooms[hash]?.messages.slice(-1)[0],
-        getUnreadMessagesAmount: (s) => (hash: string): number | undefined => {
-            return s.rooms[hash]?.messages.filter(m => m.readStatus != readStatus.READ).length
+        getUnreadMessagesAmount: (s) => (hash: string, uid?: string): number | undefined => {
+            return s.rooms[hash]?.messages.filter(m => m.readStatus !== 2 && m.sended_by_uid !== uid).length
         },
         getAllMessages: (s) => {
             return Object.keys(s.rooms).map(room_hash => {
@@ -46,6 +47,13 @@ export default {
             else {
                 state.rooms[payload.hash].messages.push(payload.message)  
             }
+        },
+        updateMessage: (state, payload: {hash: string, id: string, updateFields: object}) => {
+            const chosenMessageId = state.rooms[payload.hash].messages.findIndex(m => {
+                return m.id === payload.id
+            }),
+            message = state.rooms[payload.hash].messages[chosenMessageId]
+            state.rooms[payload.hash].messages[chosenMessageId] = {...message, ...payload.updateFields}
         },
         deleteMessage: (state, payload: {hash: string, id: string}) => {
             state.rooms[payload.hash].messages = state.rooms[payload.hash].messages.filter(m => m.id !== payload.id)
@@ -108,6 +116,12 @@ export default {
             const chatRoomRef: DocumentReference = doc(firestore, `chats/${room_id}/messages/${payload.id}`)
             commit('deleteMessage', {hash: room_id, id: payload.id})
             await deleteDoc(chatRoomRef)
+        },
+        async updateMessage({commit, getters }, payload: {hash: string, id: string, updateFields: object}): Promise<void> {
+            const messageRef: DocumentReference = doc(firestore, `chats/${payload.hash}/messages/${payload.id}`),
+                  message = getters['getRoomMessage'](payload.hash, payload.id)
+            await updateDoc(messageRef, {...message, ...payload.updateFields})
+            commit('updateMessage', {hash: payload.hash, id: payload.id, updateFields: payload.updateFields})
         }
     }
 }

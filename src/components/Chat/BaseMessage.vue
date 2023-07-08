@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full h-auto gap-2 items-center flex group" :class="{'justify-end flex-row': !isCounterMessage}">
+    <div class="w-full h-auto gap-2 items-center flex group" :class="{'justify-end flex-row': !isCounterMessage}" v-on-view="onView">
         <small class="text-gray-500 dark:text-gray-300 text-xs will-dissapear group-hover:opacity-100 opacity-0 transition-all" v-show="!isCounterMessage">{{filterDate(message.sended_at)}}</small>
         <div
             @click="showTooltip = true"
@@ -71,6 +71,10 @@ export default defineComponent({
         }
     },
     methods: {
+        onView() {
+            if(this.isCounterMessage && this.message.readStatus !== 2)
+                this.$emit('view')
+        },
         openPicture() {
             const a = document.createElement('a') as HTMLAnchorElement
             a.href = this.message.content.uploadImageURL
@@ -110,11 +114,11 @@ export default defineComponent({
             return this.getBorderStyles + ' ' + `${c ? 'bg-gray-900' : 'bg-blue-300'}`
         },
         messageStatus(): string {
-            return this.message.read_status === ReadStatus.READ
+            return this.message.readStatus === 2
                    ? 'READ' :
-                   this.message.read_status === ReadStatus.SENDED
+                   this.message.readStatus === 1
                    ? 'SENDED' :
-                   this.message.read_status === ReadStatus.SENDING
+                   this.message.readStatus === 0
                    ? 'SENDING' : ''
         }
     }

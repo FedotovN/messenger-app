@@ -21,6 +21,7 @@
         :message="message"
         :key="getMessageKey(message.sended_at)"
         :placementOrder="getMessagePlacementOrder(ind)" 
+        @view="onMessageView(message)"
         @delete="onDeleteMessageClick"
         />
     </div>
@@ -30,6 +31,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import Message from '@/classes/chat/Message';
+import ReadStatus from '@/enums/ReadStatus';
 import BaseMessage from './BaseMessage.vue';
 import BaseDateBadge from "./BaseDateBadge.vue"
 
@@ -58,9 +60,25 @@ export default defineComponent({
             type: Array as PropType<Message[]>,
             required: true,
             default: () => []
+        },
+        roomHash: {
+            type: Number,
+            required: true
         }
     },
     methods: {
+        async onMessageView(message: Message): Promise<void> {
+            console.log('message with id ', message.id, ' is in view')
+            console.log('this message is in room with hash ', this.roomHash)
+            await this.$store.dispatch('room/updateMessage', {
+                hash: this.roomHash,
+                id: message.id,
+                updateFields: {
+                    readStatus: ReadStatus.READ
+                }
+            })
+            console.log('message was successfuly updated! :)')
+        },
         showDateBadge() {
             clearTimeout(this.showBadgeTimeout)
 

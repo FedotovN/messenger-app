@@ -68,7 +68,8 @@
     },
     "titles": {
         "welcome": "Welcome",
-        "taskTracker": "Task tracker",
+        "taskTracker": "Messenger",
+        "messenger": "Messenger",
         "users": "Users",
         "register": "Sign Up",
         "passwordRecovery": "Password recovery",

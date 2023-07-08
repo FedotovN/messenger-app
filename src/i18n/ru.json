@@ -64,7 +64,8 @@
     },
     "titles": {
         "welcome": "Добро пожаловать",
-        "taskTracker": "Планировщик задач",
+        "taskTracker": "Мессенджер",
+        "messenger": "Мессенджер",
         "users": "Пользователи",
         "register": "Регистрация",
         "passwordRecovery": "Восстановление пароля",

@@ -52,13 +52,26 @@ export default createStore({
             .map(change => change.doc.data())
           newMessages.forEach((message) => {
                 const m: Message = message as Message
-                m.read_status = readStatus.SENDED
+                if(m.readStatus !== 2)
+                  m.readStatus = 1
                 commit('room/pushMessageByHash', 
                 {
                     hash, 
                     message: m
                 })
                 if(newMessageCallback) newMessageCallback(m)
+            })
+          const modifiedMessages = snapshot.docChanges()
+            .filter(change => change.type === 'modified')
+            .map(change => change.doc.data())
+          modifiedMessages.forEach((message) => {
+                const m: Message = message as Message
+                commit('room/updateMessage', 
+                {
+                    hash, 
+                    id: m.id,
+                    updateFields: {...m}
+                })
             })
           const deletedMessages = snapshot.docChanges()
                 .filter(change => change.type === 'removed')

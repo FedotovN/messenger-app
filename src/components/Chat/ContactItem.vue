@@ -73,7 +73,7 @@ export default defineComponent({
             return message
         },
         unreadMessages() {
-            return this.$store.getters['room/getUnreadMessagesAmount'](this.contact.room_hash)
+            return this.$store.getters['room/getUnreadMessagesAmount'](this.contact.room_hash, this.uid)
         }
     }
 })

@@ -30,7 +30,7 @@
       </div>
     </header>
     <main class="flex-1">
-      <messages-list :messages="messages" :uid="getUser.uid" v-if="messages?.length"/>
+      <messages-list :messages="messages" :uid="getUser.uid" :roomHash="getRoomHash" v-if="messages?.length"/>
       <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
           <base-loader size="big" />
       </div>
