@@ -20,7 +20,7 @@ function getTimeFromDate(date: Date | Timestamp) {
     }
     return unformattedRes
         .locale(locale)
-        .format('hh:ss')
+        .format('HH:mm')
 }
 
 export { filterDateFromJSONString, getTimeFromDate }
