@@ -121,9 +121,8 @@ export default defineComponent({
     watch: {
         messages: {
             handler(v) {
-                if(v[v.length - 1]?.sended_by_uid === this.uid) {
-                    this.scrollToBottom('smooth')
-                }
+                this.scrollToBottom('smooth')
+                //if (v[v.length - 1]?.sended_by_uid === this.uid) {}
             },
             deep: true
         },

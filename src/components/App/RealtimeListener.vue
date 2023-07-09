@@ -52,10 +52,9 @@ export default defineComponent({
                     const listener = this.$watch(
                         lastMessage,
                         (newValue: Message) => {
-                            if(this.firstUpload) return
+                            if(this.firstUpload || !newValue) return
                             const counter_message: boolean = newValue?.sended_by_uid !== this.uid,
-                            other_chat: boolean = this.chatId !== newValue?.sended_by_uid
-
+                            other_chat: boolean = this.chatId !== newValue?.sended_by_uid                          
                             if(counter_message && other_chat) {
                                 this.$toast.show(`${newValue?.sended_by_name}: ${newValue?.content}`)
                             }

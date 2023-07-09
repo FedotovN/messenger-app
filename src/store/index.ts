@@ -51,6 +51,7 @@ export default createStore({
             .filter(change => change.type === 'added')
             .map(change => change.doc.data())
           newMessages.forEach((message) => {
+                console.log('Сообщение было добавлено! ', message)
                 const m: Message = message as Message
                 if(m.readStatus !== 2)
                   m.readStatus = 1
