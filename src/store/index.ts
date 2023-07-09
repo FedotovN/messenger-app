@@ -6,13 +6,15 @@ import Message from '@/classes/chat/Message'
 import Contact from '@/classes/chat/Contact'
 import { DocumentData, QuerySnapshot } from 'firebase/firestore'
 import { Unsubscribe } from 'firebase/auth'
-import readStatus from '@/enums/ReadStatus'
 export default createStore({
   state: {
+    isMobileDevice: false
   },
   getters: {
+    getIsMobileDevice: (s) => s.isMobileDevice
   },
   mutations: {
+    changeIsMobileDevice: (s, p) => s.isMobileDevice = p
   },
   actions: {
     async addContactsListener({ dispatch, commit }, 
@@ -51,7 +53,6 @@ export default createStore({
             .filter(change => change.type === 'added')
             .map(change => change.doc.data())
           newMessages.forEach((message) => {
-                console.log('Сообщение было добавлено! ', message)
                 const m: Message = message as Message
                 if(m.readStatus !== 2)
                   m.readStatus = 1

@@ -15,6 +15,7 @@
   </div>
 </template>
 <script>
+  import mobileDetect from './utils/mobileDetect'
   import layouts from '@/layouts/index'
   import transitions from '@/transitions/index'
   import RealtimeListener from './components/App/RealtimeListener.vue'
@@ -38,7 +39,7 @@
       }
     },
     async created() {
-      
+      this.$store.commit('changeIsMobileDevice', mobileDetect())
       this.$store.dispatch('auth/checkAuth')
 
       const config = await this.$store.dispatch('getConfig')

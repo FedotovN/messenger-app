@@ -68,8 +68,6 @@ export default defineComponent({
     },
     methods: {
         async onMessageView(message: Message): Promise<void> {
-            console.log('message with id ', message.id, ' is in view')
-            console.log('this message is in room with hash ', this.roomHash)
             await this.$store.dispatch('room/updateMessage', {
                 hash: this.roomHash,
                 id: message.id,
@@ -77,7 +75,6 @@ export default defineComponent({
                     readStatus: ReadStatus.READ
                 }
             })
-            console.log('message was successfuly updated! :)')
         },
         showDateBadge() {
             clearTimeout(this.showBadgeTimeout)
