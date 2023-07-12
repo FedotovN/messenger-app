@@ -18,7 +18,7 @@
                 <div class="flex gap-2 overflow-hidden items-center">
                     <p
                         v-if="isTextMessage(message.content)"
-                        class="text-sm text-ellipsis px-2 overflow-hidden"
+                        class="text-sm text-ellipsis px-2 overflow-hidden whitespace-pre-line"
                         :class="{'text-gray-300': isCounterMessage, 
                                  'text-gray-700': !isCounterMessage}">{{message.content}}</p>
                     <div class="flex flex-col gap-2" v-else>
@@ -29,7 +29,7 @@
                             :class="{'text-gray-300': isCounterMessage, 
                                     'text-gray-700': !isCounterMessage}">{{ message.content.description }}</small>
                     </div>                                 
-                     <div v-show="!isCounterMessage" class="flex items-center">
+                     <div v-show="!isCounterMessage" class="h-full flex items-center justify-end">
                         <i class="fa-solid fa-check-double text-gray-700 text-xs" v-if="messageStatus === 'READ'"></i>   
                         <i class="fa-solid fa-check text-gray-700 text-xs" v-else-if="messageStatus === 'SENDED'"></i>   
                         <i class="fa-solid fa-hourglass-half text-gray-700 text-xs" v-else-if="messageStatus === 'SENDING'"></i>   
@@ -43,8 +43,6 @@
 
 <script lang="ts">
 import Message from '@/classes/chat/Message';
-import ReadStatus from '@/enums/ReadStatus';
-import ImageMessageContent from '@/interfaces/ImageMessageContent';
 import { filterDateFromJSONString } from "@/utils/dateFilter"
 import { defineComponent, PropType } from 'vue';
 export default defineComponent({

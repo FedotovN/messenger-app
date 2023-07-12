@@ -19,7 +19,7 @@
     </base-modal>
      <div class="flex w-full gap-2 max-w-full">
        <div class="rounded-full min-w-[36px] min-h-[32px] border dark:border-gray-600 flex items-center justify-center cursor-pointer group" v-tooltip="'Эмодзи'">
-           <span class="sm:text-lg" v-tooltip="'Эмодзи'">{{emoji}}</span>
+           <span class="sm:text-lg">{{emoji}}</span>
            <base-tooltip :options="{trigger: 'click'}">
                <base-emoji @pushEmoji="onEmojiPick"></base-emoji>
            </base-tooltip>
@@ -116,6 +116,7 @@ export default defineComponent({
         },
         onInput(e, model?) {
             this.calculateStyles()
+            console.log(e.target.value)
             if(model) this[model] += e.target.value
             else this.$emit('update:modelValue', e.target.value)
         },

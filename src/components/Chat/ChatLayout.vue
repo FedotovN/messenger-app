@@ -2,11 +2,14 @@
   <div class="flex flex-col max-h-[100vh] w-full dark:bg-gray-600 relative overflow-hidden">
     <base-modal v-model="showProfile" v-if="contactInfo">
       <template #header>
-        Пользователь {{ contactInfo.name }}
+        <p>Пользователь {{ contactInfo.name }}</p>
       </template> 
-      <p v-if="contactInfo.bio" class="overflow-x-hidden">О себе: {{ contactInfo.bio }}</p>
-      <p v-else>Решил не рассказывать о себе ничего!</p>
-      <p v-if="contactInfo.email">Почта: {{ contactInfo.email }}</p>
+      <div class="flex flex-col gap-3 items-center space-y-2">
+        <div class="w-[calc(32*.25rem)] overflow-hidden bg-gray-100 rounded-full">
+          <img :src="contactInfo.photoURL" :alt="contactInfo.name" v-if="contactInfo.photoURL" class="object-fit h-full">
+        </div>
+        <p v-if="contactInfo.bio" class="overflow-x-hidden">О себе: {{ contactInfo.bio }}</p>
+      </div>
     </base-modal>
     <header class="flex gap-5 items-center h-14 dark:bg-dark-200 bg-gray-700 shadow pr-2 ">
       <div class="flex items-center justify-center h-full w-16 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-100 dark:hover:text-gray-100 transition-colors" @click="close">
@@ -72,6 +75,7 @@ export default defineComponent({
         this.showProfile = true
       },
       print() {
+        if(!this.newMessageText) return
         this.messagesContainer = this.$refs.messages_container as HTMLDivElement
         const id = Math.random() + ""
         const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, this.newMessageText, readStatus.SENDING)
@@ -95,6 +99,7 @@ export default defineComponent({
         }
       },
       async sendMessage(message): Promise<void> {
+        if(!message) return
         try {
           this.messages.push(message)
           await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})

@@ -807,16 +807,16 @@ video {
   max-height: 2.5rem;
 }
 
+.max-h-\[320px\] {
+  max-height: 320px;
+}
+
 .max-h-\[calc\(100vh_-_20px\)\] {
   max-height: calc(100vh - 20px);
 }
 
 .max-h-full {
   max-height: 100%;
-}
-
-.max-h-\[320px\] {
-  max-height: 320px;
 }
 
 .min-h-\[\.75rem\] {
@@ -931,12 +931,20 @@ video {
   width: calc(100% - 20px);
 }
 
+.w-\[calc\(32\*\.25rem\)\] {
+  width: calc(32 * .25rem);
+}
+
 .w-full {
   width: 100%;
 }
 
 .min-w-\[\.75rem\] {
   min-width: .75rem;
+}
+
+.min-w-\[100px\] {
+  min-width: 100px;
 }
 
 .min-w-\[1rem\] {
@@ -961,10 +969,6 @@ video {
 
 .min-w-\[4rem\] {
   min-width: 4rem;
-}
-
-.min-w-\[100px\] {
-  min-width: 100px;
 }
 
 .max-w-\[2\.5rem\] {
@@ -1139,6 +1143,12 @@ video {
   row-gap: 10px;
 }
 
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
 .self-end {
   align-self: flex-end;
 }
@@ -1177,6 +1187,14 @@ video {
 
 .whitespace-nowrap {
   white-space: nowrap;
+}
+
+.whitespace-pre {
+  white-space: pre;
+}
+
+.whitespace-pre-line {
+  white-space: pre-line;
 }
 
 .rounded {
@@ -1590,6 +1608,11 @@ video {
   color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
+.text-green-300 {
+  --tw-text-opacity: 1;
+  color: rgb(134 239 172 / var(--tw-text-opacity));
+}
+
 .text-primary-100 {
   --tw-text-opacity: 1;
   color: rgb(37 137 189 / var(--tw-text-opacity));
@@ -1618,11 +1641,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.text-green-300 {
-  --tw-text-opacity: 1;
-  color: rgb(134 239 172 / var(--tw-text-opacity));
 }
 
 .opacity-0 {
@@ -1724,7 +1742,7 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(75 85 99 / var(--tw-border-opacity));
   --tw-bg-opacity: 1;
-  background-color: rgb(28 49 68 / var(--tw-bg-opacity));
+  background-color: rgb(35 60 84 / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: rgb(243 244 246 / var(--tw-text-opacity));
 }
@@ -1916,7 +1934,7 @@ video {
 
 :is(.dark .dark\:bg-dark-200) {
   --tw-bg-opacity: 1;
-  background-color: rgb(28 49 68 / var(--tw-bg-opacity));
+  background-color: rgb(35 60 84 / var(--tw-bg-opacity));
 }
 
 :is(.dark .dark\:bg-dark-300) {
