@@ -13,7 +13,7 @@
             </div>
         </base-tooltip>
         <div class="sm:h-16 sm:w-16 w-24 h-24 rounded-full bg-gray-200 transition-all overflow-hidden">
-            <img v-if="user.photoUrl" :src="user.photoUrl" class="h-full w-full object-cover">
+            <img v-if="user.photoURL" :src="user.photoURL" class="h-full w-full object-cover">
         </div>
         <div class="flex flex-col items-center gap-1 w-26 text-center">
             <p class="sm:text-xs text-center font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-[90px] text-gray-700 dark:text-gray-300" v-show="user.name">{{ user.name }}</p>
