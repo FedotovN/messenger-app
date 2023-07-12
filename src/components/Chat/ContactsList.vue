@@ -1,10 +1,25 @@
 <template>
     <div class="flex flex-col gap-[calc(3*0.25rem_-_2px)] h-full bg-gray-200 dark:bg-gray-700 py-3 overflow-hidden w-[300px] ">
         <header class="flex justify-between items-center">
-            <base-search-input v-model="search" placeholder="Поиск по контактам" :loading="loading" class="mx-2 w-full"/>
+            <base-search-input v-model="search" placeholder="Поиск пользователей" :loading="loading" class="mx-2 w-full"/>
         </header>
-        <div class="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="users.length && !loading && !contactsFetching">
-            <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
+        <div class="flex flex-col flex-1 overflow-x-hidden overflow-y-scroll scrollbar-hide" v-if="(contacts.length || users.length) && !loading && !contactsFetching">
+            <div class="flex flex-col w-full" v-if="contacts.length">
+                <div class="flex flex-col">
+                    <small class="pb-2 px-2 font-semibold text-gray-500">Контакты</small>
+                    <div class="flex flex-col">
+                        <contact-item v-for="contact in contacts" :key="contact.uid" :contact="contact"></contact-item>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col w-full" v-if="users.length">
+                <div class="flex flex-col">
+                    <small class="p-2 font-semibold text-gray-500">Поиск</small>
+                    <div class="flex flex-col">
+                        <contact-item v-for="user in users" :key="user.uid" :contact="user"></contact-item>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="flex-1 items-center px-3 text-center" v-else-if="!contactsFetching">
             <div class="h-full flex flex-col w-full justify-center gap-2" v-if="!search && !loading">
@@ -44,10 +59,11 @@ export default defineComponent({
         loading: false,
         contactsFetching: false,
         contactsListener: null as unknown as Unsubscribe,
+        contacts: [] as Contact[],
         users: [] as Contact[]
     }),
     async created() {
-        this.users = await this.getSortedContacts() || []
+        this.contacts = await this.getSortedContacts() || []
     },
     watch: {
         async search(newVal: string) {
@@ -56,12 +72,13 @@ export default defineComponent({
             this.loading = false
            }
            if(!newVal.length) {
-            this.users = await this.getSortedContacts() || []
+            this.contacts = await this.getSortedContacts() || []
+            this.users = []
             return
            }
 
            this.searchContact(newVal)
-           if(this.users.length) return
+            //    if(this.users.length) return
 
            this.debouncedQuery =  _.debounce(this.searchUser, 400)
            this.debouncedQuery(newVal)
@@ -70,7 +87,7 @@ export default defineComponent({
         getAllMessages: {
             async handler() {
                 if(!this.search.length) {
-                    this.users = await this.getSortedContacts() 
+                    this.contacts = await this.getSortedContacts() 
                 }
             },
             deep: true
@@ -82,7 +99,7 @@ export default defineComponent({
             getSortedContacts: 'getSortedContacts'
         }),
         searchContact(q: string): void {
-            this.users = this.getContact(q) as Contact []
+            this.contacts = this.getContact(q) as Contact []
         },
         async searchUser(q: string): Promise<void> {
            this.users = await this.getUser({name: q}) as Contact[]
