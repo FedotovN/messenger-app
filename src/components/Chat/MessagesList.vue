@@ -119,7 +119,6 @@ export default defineComponent({
         messages: {
             handler(v) {
                 this.scrollToBottom('smooth')
-                //if (v[v.length - 1]?.sended_by_uid === this.uid) {}
             },
             deep: true
         },

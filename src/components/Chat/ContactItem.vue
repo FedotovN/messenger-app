@@ -14,7 +14,8 @@
                             <small class="overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold flex-1 pr-2">
                                 <span class="dark:text-gray-300 text-gray-700">{{ lastMessage?.sended_by_name }}: </span>
                                 <span v-if="!lastMessage?.pinnedImages?.length"> {{ lastMessage.text }}</span>
-                                <span v-else class="text-green-300">Картинка 🖼️</span>
+                                <span v-else-if="lastMessage.text">🖼️: {{ lastMessage.text }}</span>
+                                <span v-else class="text-green-300">Картинк{{ lastMessage.pinnedImages.length > 1 ? 'и' : 'a' }} 🖼️</span>
                             </small>
                             <small class="text-end inline-block overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold">
                                 {{ lastMessage?.created_at ? getTimeFromDate(lastMessage.created_at) : ''}}

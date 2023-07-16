@@ -33,14 +33,23 @@
       </div>
     </header>
     <main class="flex-1">
-      <messages-list :messages="messages" :uid="getUser.uid" :roomHash="getRoomHash" v-if="messages?.length"/>
+      <messages-list
+        @editMessage="onEditMessage"
+        :messages="messages"
+        :uid="getUser.uid"
+        :roomHash="getRoomHash"
+      v-if="messages?.length"/>
       <div class="top-0 left-0 absolute flex flex-col items-center sm:h-full h-[calc(100%)] justify-center gap-4 z-50 w-full bg-[rgba(0,0,0,.4)] transition-all pointer-events-none" :class="!loading ? 'opacity-0' : ''">
           <base-loader size="big" />
       </div>
     </main>
-    <footer class="absolute bottom-0 w-full min-h-[64px] bg-gray-100 dark:bg-gray-700">
-      <div class="flex gap-2 w-full min-h-[64px] p-2" v-if="contactInfo">
-        <base-chat-input v-model="newMessageText" :chatPartner="contactInfo.name" @enter="print" @sendImage="sendImage" class="self-center" />
+    <footer class="absolute bottom-0 w-full bg-gray-100 dark:bg-gray-700">
+      <div class="flex gap-2 w-full p-2" v-if="contactInfo">
+        <message-form
+          class="self-center" 
+          :chatPartner="contactInfo.name"
+          @newMessage="sendMessage"
+        />
       </div>
     </footer>
   </div>
@@ -48,24 +57,21 @@
 <script lang="ts">
 import _ from "lodash"
 import { mapGetters } from "vuex"
-import readStatus from "@/enums/ReadStatus"
 import Message from "@/classes/chat/Message"
 import Contact from "@/classes/chat/Contact"
-import BaseChatInput from "./BaseChatInput.vue"
+import MessageForm from "./MessageForm.vue"
 import MessagesList from "./MessagesList.vue"
-import ImageMessageContent from "@/interfaces/ImageMessageContent"
 import { defineComponent } from "vue"
-import { sendImageToRoom } from "@/utils/imageUpload"
 export default defineComponent({
     name: "ChatLayout",
-    components: { BaseChatInput, MessagesList },
+    components: { MessageForm, MessagesList },
       data: () => ({
       contactInfo: null as unknown as Contact,
       messagesContainer: null as unknown as HTMLDivElement,
       messages: [] as Message[],
       loading: false as boolean,
       showProfile: false as boolean,
-      newMessageText: '',
+      newMessageText: ''
     }),
     methods: {
       close() {
@@ -73,36 +79,6 @@ export default defineComponent({
       },
       openProfile() {
         this.showProfile = true
-      },
-      print() {
-        if(!this.newMessageText) return
-        this.messagesContainer = this.$refs.messages_container as HTMLDivElement
-        const id = Math.random() + ""
-        const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, this.newMessageText, null, readStatus.SENDING)
-
-        this.sendMessage(message)
-      },
-      async sendImage({url, desc}): Promise<void> {
-        const id = Math.random() + ""
-        const uploadUrl = await sendImageToRoom(url, id, this.chatId)
-        if(uploadUrl) {
-          const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, desc, [uploadUrl], readStatus.SENDING)
-          
-          this.sendMessage(message)
-        }
-        else {
-          console.warn('Unable to send image message')
-        }
-      },
-      async sendMessage(message): Promise<void> {
-        if(!message) return
-        try {
-          this.messages.push(message)
-          await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})
-        }
-        catch(e) {
-          console.warn(e)
-        } 
       },
       async getContactInfo(): Promise<Contact> {
         const counterUid = this.$route.params.chatId
@@ -114,6 +90,19 @@ export default defineComponent({
           contact = await this.$store.dispatch('contacts/getUserInfoByUid', this.$route.params.chatId)
         }
         return contact
+      },
+      async sendMessage(message: Message): Promise<void> {
+        if(!message) return
+        try {
+            this.messages.push(message)
+            await this.$store.dispatch('room/sendMessageToUser', {message, counterId: this.contactInfo.uid})
+          }
+          catch(e) {
+              console.warn(e)
+          } 
+        },
+      onEditMessage(message) {
+        this.editableMessage = message
       }
     },
     watch: {

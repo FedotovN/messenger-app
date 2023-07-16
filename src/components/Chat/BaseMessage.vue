@@ -7,7 +7,6 @@
             :class="getStyles">
             <base-tooltip :options="{ allowHTML: true, trigger: 'click', followCursor: 'initial'}" v-if="showTooltip">
                 <div class="flex flex-col w-36 gap-2">
-                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="openPicture" v-if="message.pinnedImages?.length">Открыть картинку</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="onClick('onDelete', message)">Удалить</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Редактировать</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Переслать</p>
@@ -15,15 +14,20 @@
                 </div>
             </base-tooltip>
             <div class="flex gap-2 items-center h-full self-end overflow-hidden">
-            <div class="flex gap-2 overflow-hidden items-center">
+            <div class="flex gap-2 items-center overflow-hidden max-w-xl min-w-[100px]">
                     <div class="flex flex-col gap-2">
-                        <div class="flex justify-center items-center p-1 flex-col gap-2 max-w-xl min-w-[100px]" v-if="message.pinnedImages?.length">
-                            <img :src="message.pinnedImages[0]" alt="" class="object-cover rounded-2xl max-h-[320px]">
-                        </div>
-                        <p class="text-sm text-ellipsis px-2 overflow-hidden"
+                        <div class="flex flex-col gap-2 max-h-[360px] w-full" v-if="message.pinnedImages.length">
+                            <img :src="message.pinnedImages[0]" class="object-cover rounded-2xl max-h-[320px] w-full">
+                            <div class="flex gap-2 max-w-xl flex-1 h-full" v-if="message.pinnedImages?.length > 1">
+                                <div class="flex max-h-[30px] w-full" v-for="(image, ind) in message.pinnedImages" :key="ind">
+                                    <img :src="image" class="object-cover rounded-2xl max-h-[40px] w-full">
+                                </div>
+                            </div>
+                        </div>                                 
+                        <p class="text-sm text-ellipsis px-2 overflow-hidden whitespace-pre"
                         :class="{'text-gray-300': isCounterMessage, 
                                 'text-gray-700': !isCounterMessage}">{{ message.text }}</p>
-                    </div>                                 
+                    </div>
                      <div v-show="!isCounterMessage" class="h-full flex items-center justify-end">
                         <i class="fa-solid fa-check-double text-gray-700 text-xs" v-if="messageStatus === 'READ'"></i>   
                         <i class="fa-solid fa-check text-gray-700 text-xs" v-else-if="messageStatus === 'SENDED'"></i>   
@@ -67,12 +71,6 @@ export default defineComponent({
         onView() {
             if(this.isCounterMessage && this.message.readStatus !== 2)
                 this.$emit('view')
-        },
-        openPicture() {
-            const a = document.createElement('a') as HTMLAnchorElement
-            a.href = this.message.pinnedImages[0]
-            a.target = "_blank"
-            a.click()
         },
         filterDate(stringified) {
             return filterDateFromJSONString(stringified)
