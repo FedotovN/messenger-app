@@ -116,7 +116,6 @@ export default defineComponent({
         },
         onInput(e, model?) {
             this.calculateStyles()
-            console.log(e.target.value)
             if(model) this[model] += e.target.value
             else this.$emit('update:modelValue', e.target.value)
         },

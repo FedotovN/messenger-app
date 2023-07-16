@@ -7,7 +7,7 @@
             :class="getStyles">
             <base-tooltip :options="{ allowHTML: true, trigger: 'click', followCursor: 'initial'}" v-if="showTooltip">
                 <div class="flex flex-col w-36 gap-2">
-                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="openPicture" v-if="!isTextMessage(message.content)">Открыть картинку</p>
+                    <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="openPicture" v-if="message.pinnedImages?.length">Открыть картинку</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors" @click="onClick('onDelete', message)">Удалить</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Редактировать</p>
                     <p class="text-xs text-blue-300 cursor-pointer hover:text-blue-400 transition-colors">Переслать</p>
@@ -15,19 +15,14 @@
                 </div>
             </base-tooltip>
             <div class="flex gap-2 items-center h-full self-end overflow-hidden">
-                <div class="flex gap-2 overflow-hidden items-center">
-                    <p
-                        v-if="isTextMessage(message.content)"
-                        class="text-sm text-ellipsis px-2 overflow-hidden whitespace-pre-line"
-                        :class="{'text-gray-300': isCounterMessage, 
-                                 'text-gray-700': !isCounterMessage}">{{message.content}}</p>
-                    <div class="flex flex-col gap-2" v-else>
-                        <div class="flex justify-center items-center p-1 flex-col gap-2 max-w-xl min-w-[100px]">
-                            <img :src="message.content.uploadImageURL" alt="" class="object-cover rounded-2xl max-h-[320px]">
+            <div class="flex gap-2 overflow-hidden items-center">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-center items-center p-1 flex-col gap-2 max-w-xl min-w-[100px]" v-if="message.pinnedImages?.length">
+                            <img :src="message.pinnedImages[0]" alt="" class="object-cover rounded-2xl max-h-[320px]">
                         </div>
-                            <small class="text-sm text-ellipsis px-2 overflow-hidden"
-                            :class="{'text-gray-300': isCounterMessage, 
-                                    'text-gray-700': !isCounterMessage}">{{ message.content.description }}</small>
+                        <p class="text-sm text-ellipsis px-2 overflow-hidden"
+                        :class="{'text-gray-300': isCounterMessage, 
+                                'text-gray-700': !isCounterMessage}">{{ message.text }}</p>
                     </div>                                 
                      <div v-show="!isCounterMessage" class="h-full flex items-center justify-end">
                         <i class="fa-solid fa-check-double text-gray-700 text-xs" v-if="messageStatus === 'READ'"></i>   
@@ -75,7 +70,7 @@ export default defineComponent({
         },
         openPicture() {
             const a = document.createElement('a') as HTMLAnchorElement
-            a.href = this.message.content.uploadImageURL
+            a.href = this.message.pinnedImages[0]
             a.target = "_blank"
             a.click()
         },
@@ -89,10 +84,7 @@ export default defineComponent({
         },
         onDelete(message){
             this.$emit('delete', message.id)
-        },
-        isTextMessage(content): content is string {
-            return !Object.keys(content).includes('uploadImageURL')
-        },
+        }
     },
     computed: {
         getBorderStyles(): string {

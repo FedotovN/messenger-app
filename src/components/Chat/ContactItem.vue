@@ -13,7 +13,7 @@
                         <div class="flex w-full justify-between overflow-hidden text-sm whitespace-nowrap" v-if="lastMessage">
                             <small class="overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold flex-1 pr-2">
                                 <span class="dark:text-gray-300 text-gray-700">{{ lastMessage?.sended_by_name }}: </span>
-                                <span v-if="isTextMessage(lastMessage?.content)"> {{ lastMessage.content }}</span>
+                                <span v-if="!lastMessage?.pinnedImages?.length"> {{ lastMessage.text }}</span>
                                 <span v-else class="text-green-300">Картинка 🖼️</span>
                             </small>
                             <small class="text-end inline-block overflow-hidden whitespace-nowrap text-ellipsis dark:text-gray-400 text-gray-600 font-semibold">
@@ -55,10 +55,7 @@ export default defineComponent({
         ...mapActions('room', ['setChatListenerByRoomHash']),
         onClick() {
             this.$router.push({name: 'chat', params: {chatId: this.contact.uid}})
-        },
-        isTextMessage(content): content is string {
-            return !Object.keys(content).includes('uploadImageURL')
-        },
+        }
     },
     computed: {
         uid() {

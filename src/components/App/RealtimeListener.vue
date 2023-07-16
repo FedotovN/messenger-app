@@ -12,7 +12,6 @@ export default defineComponent({
     }),
     methods: {
         async setListeners() {
-            console.log('setting listeners')
             this.$emit('start')
 
             await this.$store.dispatch('auth/prefetchUserData')
@@ -56,7 +55,7 @@ export default defineComponent({
                             const counter_message: boolean = newValue?.sended_by_uid !== this.uid,
                             other_chat: boolean = this.chatId !== newValue?.sended_by_uid                          
                             if(counter_message && other_chat) {
-                                this.$toast.show(`${newValue?.sended_by_name}: ${newValue?.content}`)
+                                this.$toast.show(`${newValue?.sended_by_name}: ${newValue?.text || 'Отправил вам сообщение'}`)
                             }
                         }, {deep: true}
                     )

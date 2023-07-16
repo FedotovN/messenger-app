@@ -78,7 +78,7 @@ export default defineComponent({
         if(!this.newMessageText) return
         this.messagesContainer = this.$refs.messages_container as HTMLDivElement
         const id = Math.random() + ""
-        const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, this.newMessageText, readStatus.SENDING)
+        const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, this.newMessageText, null, readStatus.SENDING)
 
         this.sendMessage(message)
       },
@@ -86,11 +86,7 @@ export default defineComponent({
         const id = Math.random() + ""
         const uploadUrl = await sendImageToRoom(url, id, this.chatId)
         if(uploadUrl) {
-          const imageMessageContainer: ImageMessageContent = {
-            uploadImageURL: uploadUrl,
-            description: desc
-          }
-          const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, imageMessageContainer, readStatus.SENDING)
+          const message = new Message(id, new Date(), JSON.stringify(new Date()), this.getUser.uid, this.getUser.displayName, this.getUser.photoURL, desc, [uploadUrl], readStatus.SENDING)
           
           this.sendMessage(message)
         }
