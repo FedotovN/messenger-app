@@ -9,26 +9,24 @@
 ## Tech Stack
 ![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)
 
-**Other:** lodash, moment, i18n, tippy, e.t.c
-
+**Other:** lodash, moment, vue-i18n, tippy, e.t.c
  
-## Features
+## Features <sub><sup> Some of them may be not on prod yet </sup></sub>
 
 - Light/dark mode toggle and adaptive design using Tailwind CSS
+- Internalization with i18n library (Ru-En)
+- Realtime messaging and message status ( sending / sended / read )
+  - Message read status update on user view (using Intersection API)
 - Firebase Auth with password recovery and email verification
   - Forms validation using Vuelidate
   - Random password generator
-- Internalization with i18n library (Ru-En)
 - Image upload to Firebase Storage for sharing pictures
-- Profile editing with random avatar option and more
+  - Messages can contain up to 8 pictures - even GIF!
+  - You can paste an image to input field
+- Profile editing
+  - Avatar image upload
+  - Random avatar powered by Multiavatar API
 - Emoji picker 🤟
- 
-## To-Do 📈
-- [ ] - Change login and registration header from "Task tracker" to "Messenger" finally
-- [ ] - Friend list
-- [ ] - Group chats
-- [ ] - Messages forward
-- [ ] - Full i18n
 
 ## Related
 
